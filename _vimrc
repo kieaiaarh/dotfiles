@@ -90,12 +90,16 @@ NeoBundle 'bronson/vim-trailing-whitespace'
 
 " Gitを便利に使う
 NeoBundle 'tpope/vim-fugitive'
+
+NeoBundle 'mattn/emmet-vim'
+
 "
 " """"""""""""""""""""""""""""""
 " ファイルをtree表示してくれる
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'tomtom/tcomment_vim'
 
+NeoBundle 'grep.vim'
 call neobundle#end()
 
 " Required:
@@ -213,3 +217,11 @@ nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
+
+let g:user_emmet_leader_key='<c-e>'
+let g:user_emmet_settings = {
+    \    'variables': {
+    \      'lang': "ja"
+    \    },
+    \   'indentation': '  '
+    \ }
