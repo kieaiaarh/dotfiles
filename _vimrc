@@ -53,7 +53,12 @@ hi Comment ctermfg=gray
 "######カーソル位置
 set ruler
 set cursorline
-set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+"set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+
+"####連続インデント↲
+vnoremap <silent> > >gv↲
+vnoremap <silent> < <gv↲
+"
 
 """"""""""""""""""""""""""""""
 " プラグインのセットアップ
