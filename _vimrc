@@ -56,9 +56,8 @@ set cursorline
 "set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
 
 "####連続インデント↲
-vnoremap <silent> > >gv↲
-vnoremap <silent> < <gv↲
-"
+vnoremap <silent> > >gv
+vnoremap <silent> < <gv
 
 """"""""""""""""""""""""""""""
 " プラグインのセットアップ
