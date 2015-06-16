@@ -1,3 +1,7 @@
+set encoding=utf-8
+set fileencodings=euc-jp,iso-2022-jp,sjis,utf-8
+" 改行コード
+set fileformats=unix,dos,mac
 " カーソルを行頭、行末で止まらないようにする
 set whichwrap=b,s,h,l,<,>,[,]
 " backspace working
