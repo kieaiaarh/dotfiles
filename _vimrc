@@ -68,6 +68,7 @@ vnoremap <silent> < <gv
 """"""""""""""""""""""""""""""
 if has('vim_starting')
 set nocompatible      " Be iMproved
+filetype off
 " Required:
 set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
@@ -225,6 +226,7 @@ nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
 
 let g:user_emmet_leader_key='<c-e>'
 let g:user_emmet_settings = {
