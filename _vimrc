@@ -102,6 +102,8 @@ NeoBundle 'tpope/vim-fugitive'
 
 NeoBundle 'mattn/emmet-vim'
 
+" 一括コメントアウト
+NeoBundle "tyru/caw.vim.git"
 "
 " """"""""""""""""""""""""""""""
 " ファイルをtree表示してくれる
@@ -227,6 +229,10 @@ nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
 nnoremap <silent><C-e> :NERDTreeToggle<CR>
+
+" commentout
+nmap <C-K> <Plug>(caw:i:toggle)
+vmap <C-K> <Plug>(caw:i:toggle)
 
 let g:user_emmet_leader_key='<c-e>'
 let g:user_emmet_settings = {
