@@ -1,5 +1,5 @@
 set encoding=utf-8
-set fileencodings=euc-jp,iso-2022-jp,sjis,utf-8
+set fileencodings=utf-8,euc-jp,iso-2022-jp,sjis
 " 改行コード
 set fileformats=unix,dos,mac
 " カーソルを行頭、行末で止まらないようにする
