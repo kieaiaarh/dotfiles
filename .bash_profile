@@ -2,13 +2,17 @@
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
-  > . ~/.bashrc
+	. ~/.bashrc
 fi
 
 # User specific environment and startup programs
 
-PATH=$PATH:$HOME/bin:
+PATH=$PATH:$HOME/bin
 
-export PATH=$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shimsexport 
-#export PS1="\[\e[1;32m\]\u\[\e[m\] \[\e[1;34m\]\W\[\e[m\] $ "
 export PATH
+
+alias devlog='tail -n 30 -f fuel/app/logs/development/`date +\%Y/\%m/\%d`.php'
+alias ll='ls -la --color=auto'
+alias grep='grep --color'
+alias df='df -h'
+alias ps='ps --sort=start_time'
