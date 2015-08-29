@@ -13,7 +13,7 @@ export PATH
 export PS1='\[\e[1;34m\]\w${text} $\[\e[m\] '
 
 alias devlog='tail -n 30 -f fuel/app/logs/development/`date +\%Y/\%m/\%d`.php'
-alias ll='ls -la --color=auto'
+alias ll='ls -lha --color=auto'
 alias grep='grep --color'
 alias df='df -h'
 alias ps='ps --sort=start_time'
