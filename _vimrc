@@ -242,3 +242,13 @@ let g:user_emmet_settings = {
     \    },
     \   'indentation': '  '
     \ }
+
+
+"" php syntax check
+augroup PHP
+  autocmd!
+  autocmd FileType php set makeprg=php\ -l\ %
+  " php -lの構文チェックでエラーがなければ「No syntax errors」の一行だけ出力される
+  autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
+augroup END
+syntax on
