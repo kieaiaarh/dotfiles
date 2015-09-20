@@ -10,7 +10,7 @@ fi
 PATH=$PATH:$HOME/bin
 
 export PATH
-export PS1='\[\e[1;34m\]\w${text} $\[\e[m\] '
+export PS1='\[\e[0;32m\]\u@\h\e[m\] \[\e[1;34m\]\w${text} $\[\e[m\] '
 
 alias devlog='tail -n 30 -f fuel/app/logs/development/`date +\%Y/\%m/\%d`.php'
 alias ll='ls -lha --color=auto'
