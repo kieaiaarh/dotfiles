@@ -2,7 +2,7 @@
 
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
+  . ~/.bashrc
 fi
 
 # User specific environment and startup programs
@@ -22,3 +22,6 @@ alias rn='sudo service nginx restart'
 alias rp='sudo service php-fpm restart'
 #alias mydb='mysql -h localhost -p -u kieaiaarh -D nikkei'
 alias his='history | grep '
+alias mydb="psql -U kieaiaarh -d nikkei"
+export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/kieaiaarh/bin:/home/kieaiaarh/.rbenv/bin:/home/kieaiaarh/.rbenv/shims
+PATH="/usr/local/heroku/bin:$PATH"
