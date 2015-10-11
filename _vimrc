@@ -80,6 +80,23 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 " Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
+"for rails
+NeoBundle 'tpope/vim-rails'
+NeoBundle 'tpope/vim-endwise'
+
+" シングルクオートとダブルクオートの入れ替え等
+NeoBundle 'tpope/vim-surround'
+"vimshell
+NeoBundle 'Shougo/vimshell'
+NeoBundle 'Shougo/vimproc.vim', {
+      \ 'build' : {
+      \     'windows' : 'tools\\update-dll-mingw',
+      \     'cygwin' : 'make -f make_cygwin.mak',
+      \     'mac' : 'make -f make_mac.mak',
+      \     'linux' : 'make',
+      \     'unix' : 'gmake',
+      \    },
+      \ }
 " ファイルオープンを便利に
 NeoBundle 'Shougo/unite.vim'
 " Unite.vimで最近使ったファイルを表示できるようにする
@@ -102,6 +119,8 @@ NeoBundle 'tpope/vim-fugitive'
 
 NeoBundle 'mattn/emmet-vim'
 
+"neocomplcache
+NeoBundle 'Shougo/neocomplcache'
 " 一括コメントアウト
 NeoBundle "tyru/caw.vim.git"
 "
@@ -231,6 +250,16 @@ nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
 nnoremap <silent><C-e> :NERDTreeToggle<CR>
 noremap!  
 
+" vimshell setting
+let g:vimshell_interactive_update_time = 10
+let g:vimshell_prompt = "$ "
+let g:vimshell_user_prompt = 'getcwd()'
+
+" vimshell map
+nnoremap <silent> vs :VimShell<CR>
+nnoremap <silent> vsc :VimShellCreate<CR>
+nnoremap <silent> vp :VimShellPop<CR>
+
 " commentout
 nmap <C-K> <Plug>(caw:i:toggle)
 vmap <C-K> <Plug>(caw:i:toggle)
@@ -252,3 +281,38 @@ augroup PHP
   autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
 augroup END
 syntax on
+
+
+"neocompelte
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplcache.
+let g:neocomplcache_enable_at_startup = 1
+" Use smartcase.
+let g:neocomplcache_enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+" Define dictionary.
+let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default' : ''
+\ }
+"
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-l>     neocomplcache#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplcache#smart_close_popup() . "\<CR>"
+endfunction
+"<TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>: "\<TAB>"
+"<C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplcache#close_popup()
+inoremap <expr><C-e>  neocomplcache#cancel_popup()
