@@ -20,13 +20,17 @@ alias ps='ps --sort=start_time'
 alias v='vim'
 alias gb='git branch'
 alias gs='git status'
-alias gd='git diff'
+alias gd='git diff '
 alias gc='git checkout'
+alias gc='git log'
 alias rl='rails'
 alias rls='rails s -b 192.168.33.16'
 alias rc='rails console'
 alias rk='rake'
 alias rs='rspec'
+
+alias c='casperjs '
+alias ct='c test'
 
 
 alias rn='sudo service nginx restart'

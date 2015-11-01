@@ -83,6 +83,8 @@ NeoBundleFetch 'Shougo/neobundle.vim'
 "for rails
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'tpope/vim-endwise'
+"autoclose"
+NeoBundle 'Townk/vim-autoclose'
 
 " シングルクオートとダブルクオートの入れ替え等
 NeoBundle 'tpope/vim-surround'
@@ -259,6 +261,8 @@ let g:vimshell_user_prompt = 'getcwd()'
 nnoremap <silent> vs :VimShell<CR>
 nnoremap <silent> vsc :VimShellCreate<CR>
 nnoremap <silent> vp :VimShellPop<CR>
+" delete Space
+nnoremap <silent> dw :FixWhitespace<CR>
 
 " commentout
 nmap <C-K> <Plug>(caw:i:toggle)
@@ -305,14 +309,14 @@ inoremap <expr><C-l>     neocomplcache#complete_common_string()
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplcache#smart_close_popup() . "\<CR>"
-endfunction
-"<TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>: "\<TAB>"
-"<C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+" function! s:my_cr_function()
+"   return neocomplcache#smart_close_popup() . "\<CR>"
+" endfunction
+" "<TAB>: completion.
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>: "\<TAB>"
+" "<C-h>, <BS>: close popup and delete backword char.
+" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><C-y>  neocomplcache#close_popup()
+" inoremap <expr><C-e>  neocomplcache#cancel_popup()
