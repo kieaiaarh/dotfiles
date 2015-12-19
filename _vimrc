@@ -75,7 +75,7 @@ endif
 
 " Required:
 call neobundle#begin(expand('~/.vim/bundle/'))
-
+call neobundle#load_cache()
 " Let NeoBundle manage NeoBundle
 " Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
@@ -132,6 +132,8 @@ NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'tomtom/tcomment_vim'
 
 NeoBundle 'grep.vim'
+
+NeoBundleSaveCache
 call neobundle#end()
 
 " Required:
@@ -268,7 +270,7 @@ nnoremap <silent> dw :FixWhitespace<CR>
 nmap <C-K> <Plug>(caw:i:toggle)
 vmap <C-K> <Plug>(caw:i:toggle)
 
-let g:user_emmet_leader_key='<c-e>'
+let g:user_emmet_leader_key='<c-t>'
 let g:user_emmet_settings = {
     \    'variables': {
     \      'lang': "ja"
