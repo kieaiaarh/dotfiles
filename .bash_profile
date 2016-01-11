@@ -24,6 +24,7 @@ alias gd='git diff '
 alias gc='git checkout'
 alias gl='git log'
 alias rl='rails'
+alias ga='git rm `git ls-files --deleted`'
 alias rls='rails s -b 192.168.33.16'
 alias rc='rails console'
 alias rk='rake'
@@ -33,10 +34,10 @@ alias heroku_bash='heroku run bash '
 # ipython
 alias in='ipython notebook --ip=0.0.0.0'
 
-alias c='casperjs '
+alias c='casperjs'
 # alias debug='--verbose --log-level=debug'
 # alias info='--verbose --log-level=info'
-alias ct='c test'
+alias ct='c test --includes=config/init.js'
 
 # hub
 eval "$(hub alias -s)" # bash
