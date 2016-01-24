@@ -90,6 +90,7 @@ NeoBundle 'junegunn/vim-easy-align'
 "for rails
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'tpope/vim-endwise'
+
 "autoclose"
 NeoBundle 'Townk/vim-autoclose'
 
@@ -278,6 +279,9 @@ nnoremap <silent> vsc :VimShellCreate<CR>
 nnoremap <silent> vp :VimShellPop<CR>
 " delete Space
 nnoremap <silent> dw :FixWhitespace<CR>
+" rails server start/stop
+nnoremap <silent> rs  :Rserver -b 192.168.33.16<CR>
+nnoremap <silent> rt :Rserver! -b 192.168.33.16<CR>
 
 " commentout
 nmap <C-K> <Plug>(caw:i:toggle)
@@ -300,7 +304,6 @@ augroup PHP
   autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
 augroup END
 syntax on
-
 
 "neocompelte
 " Disable AutoComplPop.
