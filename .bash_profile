@@ -28,6 +28,8 @@ alias rc='rails console'
 alias rk='rake'
 alias rs='rspec'
 
+alias bash='v ~/.bash_profile'
+alias reload='source ~/.bash_profile'
 
 alias rn='sudo service nginx restart'
 alias rp='sudo service php-fpm restart'
