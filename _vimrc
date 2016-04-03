@@ -46,6 +46,11 @@ set smartindent "オートインデント
 set shiftwidth=2
 set smarttab
 set hlsearch
+" python indent
+autocmd FileType python setl autoindent
+autocmd FileType python setl smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+autocmd FileType python setl tabstop=8 expandtab shiftwidth=4 softtabstop=4
+
 "#####検索設定#####
 set ignorecase "大文字/小文字の区別なく検索する
 set smartcase "検索文字列に大文字が含まれている場合は区別して検索する
@@ -75,14 +80,19 @@ endif
 
 " Required:
 call neobundle#begin(expand('~/.vim/bundle/'))
-
+call neobundle#load_cache()
 " Let NeoBundle manage NeoBundle
 " Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
+NeoBundle 'junegunn/vim-easy-align'
+
 "for rails
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'tpope/vim-endwise'
+
+"autoclose"
+NeoBundle 'Townk/vim-autoclose'
 
 " シングルクオートとダブルクオートの入れ替え等
 NeoBundle 'tpope/vim-surround'
@@ -130,6 +140,8 @@ NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'tomtom/tcomment_vim'
 
 NeoBundle 'grep.vim'
+
+NeoBundleSaveCache
 call neobundle#end()
 
 " Required:
@@ -165,6 +177,12 @@ au FileType unite inoremap <silent> <buffer> <expr> <C-K>
 " " ESCキーを2回押すと終了する
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+
+" Easy Align
+" Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
+vmap <Enter> <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 function! ZenkakuSpace()
     highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
@@ -259,12 +277,17 @@ let g:vimshell_user_prompt = 'getcwd()'
 nnoremap <silent> vs :VimShell<CR>
 nnoremap <silent> vsc :VimShellCreate<CR>
 nnoremap <silent> vp :VimShellPop<CR>
+" delete Space
+nnoremap <silent> dw :FixWhitespace<CR>
+" rails server start/stop
+nnoremap <silent> rs  :Rserver -b 192.168.33.16<CR>
+nnoremap <silent> rt :Rserver! -b 192.168.33.16<CR>
 
 " commentout
 nmap <C-K> <Plug>(caw:i:toggle)
 vmap <C-K> <Plug>(caw:i:toggle)
 
-let g:user_emmet_leader_key='<c-e>'
+let g:user_emmet_leader_key='<c-t>'
 let g:user_emmet_settings = {
     \    'variables': {
     \      'lang': "ja"
@@ -281,7 +304,6 @@ augroup PHP
   autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
 augroup END
 syntax on
-
 
 "neocompelte
 " Disable AutoComplPop.
@@ -305,14 +327,14 @@ inoremap <expr><C-l>     neocomplcache#complete_common_string()
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplcache#smart_close_popup() . "\<CR>"
-endfunction
-"<TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>: "\<TAB>"
-"<C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+" function! s:my_cr_function()
+"   return neocomplcache#smart_close_popup() . "\<CR>"
+" endfunction
+" "<TAB>: completion.
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>: "\<TAB>"
+" "<C-h>, <BS>: close popup and delete backword char.
+" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><C-y>  neocomplcache#close_popup()
+" inoremap <expr><C-e>  neocomplcache#cancel_popup()

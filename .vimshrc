@@ -12,6 +12,8 @@ alias rls='rails s -b 192.168.33.16'
 alias rc='rails console'
 alias rk='rake'
 alias rs='rspec'
+alias c='casperjs --verbose --log-level=debug'
+alias ct='c test'
 
 
 alias rn='sudo service nginx restart'
