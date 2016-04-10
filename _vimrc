@@ -338,3 +338,6 @@ inoremap <expr><C-l>     neocomplcache#complete_common_string()
 " inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 " inoremap <expr><C-y>  neocomplcache#close_popup()
 " inoremap <expr><C-e>  neocomplcache#cancel_popup()
+
+" stop insert mode
+inoremap <silent> kk <ESC>
