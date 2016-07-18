@@ -71,6 +71,8 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 " Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
+NeoBundle 'tpope/vim-endwise'
+
 " ファイルオープンを便利に
 NeoBundle 'Shougo/unite.vim'
 " Unite.vimで最近使ったファイルを表示できるようにする
@@ -81,6 +83,9 @@ NeoBundle 'tpope/vim-surround'
 
 " インデントに色を付けて見やすくする
 NeoBundle 'nathanaelkane/vim-indent-guides'
+
+NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/neocomplete'
 
 " ログファイルを色づけしてくれる
 NeoBundle 'vim-scripts/AnsiEsc.vim'
@@ -94,8 +99,7 @@ NeoBundle 'tpope/vim-fugitive'
 " """"""""""""""""""""""""""""""
 " ファイルをtree表示してくれる
 NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'tomtom/tcomment_vim'
-
+NeoBundle "tyru/caw.vim.git"
 call neobundle#end()
 
 " Required:
@@ -179,6 +183,7 @@ endfunction" コメントON/OFFを手軽に実行
 
 " vimを立ち上げたときに、自動的にvim-indent-guidesをオンにする
 let g:indent_guides_enable_on_vim_startup = 1
+let g:neocomplete#enable_at_startup = 1
 
 
 " grep検索の実行後にQuickFix Listを表示する
@@ -213,3 +218,12 @@ nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
+
+nnoremap dw :<C-u>FixWhitespace<CR>
+" tcomment_vim
+nmap <C-K> <Plug>(caw:i:toggle)
+vmap <C-K> <Plug>(caw:i:toggle)
+
+" continuous indent
+vnoremap <silent> > >gv
+vnoremap <silent> < <gv

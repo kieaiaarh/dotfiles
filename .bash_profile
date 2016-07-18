@@ -10,15 +10,16 @@ fi
 PATH=$PATH:$HOME/bin:/usr/local/bin
 
 export PATH
-export PS1='\[\e[0;32m\]\u@\h\e[m\] \[\e[1;34m\]\w${text} $\[\e[m\] '
+export PS1='\[\e[0;32m\]\u@ \[\e[1;34m\]\w${text} $\[\e[m\] '
 
 alias devlog='tail -n 30 -f fuel/app/logs/development/`date +\%Y/\%m/\%d`.php'
-alias ll='ls -lha --color=auto'
+alias ll='ls -lha -G'
 alias grep='grep --color'
 alias df='df -h'
 alias ps='ps --sort=start_time'
 alias v='vim'
 
+alias pt='sudo lsof -i -P | grep "LISTEN"'
 # git
 alias gb='git branch'
 alias gs='git status'
@@ -30,6 +31,7 @@ alias rl='rails'
 alias ga='git rm `git ls-files --deleted`'
 alias rls='rails s -b xxxxxxx'
 alias rc='rails console'
+alias rct='rails console --sandbox'
 alias rk='rake'
 alias rs='rspec'
 alias heroku_bash='heroku run bash '
@@ -41,30 +43,31 @@ alias bash='v ~/.bash_profile'
 alias reload='source ~/.bash_profile'
 alias mg='rake db:migrate'
 
-alias c='casperjs'
+# alias c='casperjs'
 # alias debug='--verbose --log-level=debug'
 # alias info='--verbose --log-level=info'
-alias ct='c test --includes=config/init.js'
-
-# hub
-eval "$(hub alias -s)" # bash
+# alias ct='c test --includes=config/init.js'
 
 alias bash='v ~/.bash_profile'
 alias reload='source ~/.bash_profile'
 
 alias rn='sudo service nginx restart'
-alias rp='sudo service php-fpm restart'
 alias h='history | grep '
 alias mydb="psql -U kieaiaarh -d nikkei"
 export PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/home/kieaiaarh/bin:/home/kieaiaarh/.rbenv/bin:/home/kieaiaarh/.rbenv/shims
 PATH="/usr/local/heroku/bin:$PATH"
-# pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
 
 export JAVA_HOME=/usr/local/src/jdk1.8.0_72
 export PATH=$PATH:$JAVA_HOME/bin
 export CLASSPATH=.:$JAVA_HOME/jre/lib:$JAVA_HOME/lib:$JAVA_HOME/lib/tools.jar
 
 
+export PATH=/usr/local/bin:$PATH
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
+
+# Postgre
+export PGDATA=/usr/local/var/postgres
+alias pgstart='pg_ctl -D /usr/local/var/postgres -l logfile start'
+alias pgstop='pg_ctl -D /usr/local/var/postgres -l logfile stop'
