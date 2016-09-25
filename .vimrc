@@ -9,6 +9,7 @@ colorscheme desert
 set cmdheight=2
 " " エディタウィンドウの末尾から2行目にステータスラインを常時表示させる
 set laststatus=2
+set binary noeol
 " "
 " ステータス行に表示させる情報の指定(どこからかコピペしたので細かい意味はわかっていない)
 set statusline=%<%f\%m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
@@ -26,9 +27,10 @@ set browsedir=buffer
 set expandtab
 set incsearch
 set hidden
-set list
+" set list
 " タブと行の続きを可視化する
-set listchars=tab:>\ ,extends:<
+" set listchars=tab:>\ ,extends:<
+set listchars=tab:>.,trail:-,eol:$,nbsp:%
 
 set noswapfile
 set number "行番号を表示する
