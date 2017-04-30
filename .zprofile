@@ -1,3 +1,6 @@
+autoload -U compinit
+compinit
+
 # Get the aliases and functions
 if [ -f ~/.bashrc ]; then
   . ~/.bashrc
@@ -7,8 +10,26 @@ fi
 
 PATH=$PATH:$HOME/bin:/usr/local/bin
 
+ZSH_THEME="af-magic"
+alias ll='ls -lhaR'
+
 export PATH
 # export PS1='\[\e[0;32m\]\u@ \[\e[1;34m\]\w${text} $\[\e[m\] '
+# prompt
+# PROMPT='%F{green}%~%f $ '
+# PROMPT='%m:%F{green}%c%f %n%# '
+
+# 重複を記録しない
+setopt hist_ignore_dups
+# historyを共有
+setopt share_history
+# 余分な空白は詰めて記録
+setopt hist_reduce_blanks
+# 補完時にヒストリを自動的に展開
+setopt hist_expand
+# 履歴をインクリメンタルに追加
+setopt inc_append_history
+
 export AWS_REGION=ap-northeast-1
 alias devlog='tail -n 30 -f fuel/app/logs/development/`date +\%Y/\%m/\%d`.php'
 alias ll='ls -lha -G'
@@ -17,7 +38,7 @@ alias df='df -h'
 alias ps='ps --sort=start_time'
 alias v='vim'
 
-alias pt='sudo lsof -i -P | grep "LISTEN"'
+alias pt='lsof -i -P | grep "LISTEN"'
 # git
 alias gb='git branch'
 alias gs='git status'
@@ -39,7 +60,7 @@ alias e2h="rake haml:erb2haml"
 # ipython
 alias jn='jupyter notebook --ip=0.0.0.0'
 # alias in='ipython notebook --ip=xxxxxx'
-alias bash='v ~/.bash_profile'
+alias zprofile='v ~/.zprofile'
 alias reload='source ~/.bash_profile'
 alias mg='rake db:migrate'
 

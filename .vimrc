@@ -221,7 +221,7 @@ nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
 
-nnoremap dw :<C-u>FixWhitespace<CR>
+nnoremap de :<C-u>FixWhitespace<CR>
 " tcomment_vim
 nmap <C-K> <Plug>(caw:i:toggle)
 vmap <C-K> <Plug>(caw:i:toggle)
@@ -229,3 +229,20 @@ vmap <C-K> <Plug>(caw:i:toggle)
 " continuous indent
 vnoremap <silent> > >gv
 vnoremap <silent> < <gv
+
+" Jedi is by default automatically initialized for python
+let g:jedi#auto_initialization = 0
+let g:jedi#use_tabs_not_buffers = 1
+
+"https://github.com/vim-syntastic/syntastic
+execute pathogen#infect()
+
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
