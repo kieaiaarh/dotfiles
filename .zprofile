@@ -31,6 +31,7 @@ setopt hist_expand
 setopt inc_append_history
 
 export AWS_REGION=ap-northeast-1
+alias login_ecr=aws ecr get-login --region ap-northeast-1
 alias devlog='tail -n 30 -f fuel/app/logs/development/`date +\%Y/\%m/\%d`.php'
 alias ll='ls -lha -G'
 alias grep='grep --color'
@@ -50,7 +51,8 @@ alias mylog='git log --graph --name-status --pretty=format:"%C(red)%h %C(green)%
 alias rl='rails'
 alias bt='rails runner'
 alias ga='git rm `git ls-files --deleted`'
-alias rls='rails s -b 0.0.0.0'
+# alias rls='rails s -b 0.0.0.0'
+alias rls='rails s -C config/puma.rb -d'
 # alias rls='rails s -b 192.168.179.3'
 alias rc='rails console'
 alias rct='rails console --sandbox'
@@ -98,13 +100,11 @@ alias pgstart='launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql
 alias pgstop='launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.postgresql.plist'
 #psql -h hostname -U username -d databasename
 
-# export ELASTICPATH=/usr/local/Cellar/elasticsearch/2.3.4/libexec/bin
-# export KIBANAPATH=/usr/local/Cellar/elasticsearch/2.3.4/libexec/kibana-4.5.3-darwin-x64/bin
-# export PATH=$PATH:$ELASTICPATH:$KIBANAPATH
-
-# misspratinum
+# missplatinum
 # wget -r ftp://lolipop.jp-7555229fea2cbdc6:hr9-gs_qpdb@ftp.7555229fea2cbdc6.lolipop.jp
 # rails new misspratinum -d postgresql --skip-keeps --skip-test-unit --no-rc
+#
+alias fig='docker-compose'
 alias docker_web='docker-compose up -d postgres && sleep 5 && docker-compose run web rake db:create && docker-compose up -d'
 # alias docker_web='docker-compose up -d && docker-compose run web rake db:create'
 alias docker_all_containers_delete="docker ps -a | awk '{print $1}' | xargs docker rm"
