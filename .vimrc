@@ -77,6 +77,9 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 " Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
+" html 補完
+NeoBundle 'mattn/emmet-vim'
+
 NeoBundle 'tpope/vim-endwise'
 NeoBundle 'slim-template/vim-slim'
 
@@ -252,6 +255,9 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_aggregate_errors = 1
+
+" https://qiita.com/muran001/items/9ce24525b3285678acc3#%E3%81%A1%E3%82%87%E3%81%A3%E3%81%A8%E3%81%A0%E3%81%91%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA
+let g:user_emmet_leader_key='<c-t>'
 
 "https://github.com/vim-syntastic/syntastic
 execute pathogen#infect()
