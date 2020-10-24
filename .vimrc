@@ -1,5 +1,8 @@
 " カーソルを行頭、行末で止まらないようにする
 set whichwrap=b,s,h,l,<,>,[,]
+
+" https://vim-jp.org/vimdoc-ja/options.html#'maxmempattern'
+set maxmempattern=2000000
 " backspace working
 set backspace=indent,eol,start
 highlight LineNr ctermfg=darkyellow
@@ -25,6 +28,7 @@ set showcmd
 " バッファで開いているファイルのディレクトリでエクスクローラを開始する(でもエクスプローラって使ってない)
 set browsedir=buffer
 set expandtab
+set softtabstop=2
 set incsearch
 set hidden
 " set list
@@ -49,7 +53,7 @@ set ignorecase "大文字/小文字の区別なく検索する
 set smartcase "検索文字列に大文字が含まれている場合は区別して検索する
 set wrapscan "検索時に最後まで行ったら最初に戻る
 "###### クリップボード有効化
-set clipboard=unnamed
+set clipboard+=unnamed
 "######コメントをグレーにする
 hi Comment ctermfg=gray
 "######カーソル位置
@@ -74,11 +78,14 @@ call neobundle#begin(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 NeoBundle 'tpope/vim-endwise'
+NeoBundle 'slim-template/vim-slim'
 
 " ファイルオープンを便利に
 NeoBundle 'Shougo/unite.vim'
 " Unite.vimで最近使ったファイルを表示できるようにする
 NeoBundle 'Shougo/neomru.vim'
+
+NeoBundle 'posva/vim-vue'
 
 " シングルクオートとダブルクオートの入れ替え等
 NeoBundle 'tpope/vim-surround'
@@ -105,7 +112,7 @@ NeoBundle "tyru/caw.vim.git"
 call neobundle#end()
 
 " Required:
-filetype plugin indent on
+" filetype plugin indent on
 
 " If there are uninstalled bundles found on startup,
 " this will conveniently prompt you to install them.
@@ -221,6 +228,8 @@ nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
 
+autocmd FileType vue syntax sync fromstart
+
 nnoremap de :<C-u>FixWhitespace<CR>
 " tcomment_vim
 nmap <C-K> <Plug>(caw:i:toggle)
@@ -234,9 +243,6 @@ vnoremap <silent> < <gv
 let g:jedi#auto_initialization = 0
 let g:jedi#use_tabs_not_buffers = 1
 
-"https://github.com/vim-syntastic/syntastic
-execute pathogen#infect()
-
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -246,3 +252,33 @@ let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 let g:syntastic_aggregate_errors = 1
+
+"https://github.com/vim-syntastic/syntastic
+execute pathogen#infect()
+syntax on
+filetype plugin indent on
+
+" 正規表現を普通にする
+" https://qiita.com/m-yamashita/items/5755ca2717c8d5be57e4
+nmap / /\v
+
+" vueファイルコメントアウト
+let g:ft = ''
+function! NERDCommenter_before()
+  if &ft == 'vue'
+    let g:ft = 'vue'
+    let stack = synstack(line('.'), col('.'))
+    if len(stack) > 0
+      let syn = synIDattr((stack)[0], 'name')
+      if len(syn) > 0
+        exe 'setf ' . substitute(tolower(syn), '^vue_', '', '')
+      endif
+    endif
+  endif
+endfunction
+function! NERDCommenter_after()
+  if g:ft == 'vue'
+    setf vue
+    let g:ft = ''
+  endif
+endfunction
