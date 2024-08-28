@@ -1,9 +1,65 @@
-set encoding=utf-8
-set fileencodings=utf-8,euc-jp,iso-2022-jp,sjis
+if has('vim_starting')
+  set nocompatible
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
+
+call neobundle#begin(expand('~/.vim/bundle/'))
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+" プラグインのセットアップ
+" html 補完
+NeoBundle 'mattn/emmet-vim'
+NeoBundle 'tpope/vim-endwise'
+" ファイルオープンを便利に
+NeoBundle 'Shougo/unite.vim'
+" Unite.vimで最近使ったファイルを表示できるようにする
+NeoBundle 'Shougo/neomru.vim'
+NeoBundle 'posva/vim-vue'
+" インデントに色を付けて見やすくする
+NeoBundle 'nathanaelkane/vim-indent-guides'
+" 高度な補完機能
+" NeoBundle 'neoclide/coc.nvim', {'branch': 'release'}
+" ログファイルを色づけしてくれる
+NeoBundle 'vim-scripts/AnsiEsc.vim'
+" 行末の半角スペースを可視化
+NeoBundle 'bronson/vim-trailing-whitespace'
+" ファイルをtree表示してくれる
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle "tyru/caw.vim.git"
+
+NeoBundle 'prabirshrestha/asyncomplete.vim'
+NeoBundle 'prabirshrestha/asyncomplete-lsp.vim'
+NeoBundle 'prabirshrestha/vim-lsp'
+NeoBundle 'mattn/vim-lsp-settings'
+
+
+call neobundle#end()
+filetype plugin indent on
+
+" 補完機能を有効
+set completeopt=menu,menuone,noselect
+set shortmess+=c
+augroup AutoComplete
+  autocmd!
+  autocmd TextChangedI * call feedkeys("\<C-n>", 't')
+augroup END
+
 " 改行コード
 set fileformats=unix,dos,mac
+
 " カーソルを行頭、行末で止まらないようにする
 set whichwrap=b,s,h,l,<,>,[,]
+" マウス操作が有効
+set mouse=a
+
+if has("mouse_sgr")
+  set ttymouse=sgr
+else
+  set ttymouse=xterm2
+endif
+
+" https://vim-jp.org/vimdoc-ja/options.html#'maxmempattern'
+set maxmempattern=1000000
 " backspace working
 set backspace=indent,eol,start
 highlight LineNr ctermfg=darkyellow
@@ -11,28 +67,29 @@ highlight LineNr ctermfg=darkyellow
 colorscheme desert
 " コマンドラインに使われる画面上の行数
 set cmdheight=2
-" " エディタウィンドウの末尾から2行目にステータスラインを常時表示させる
+" エディタウィンドウの末尾から2行目にステータスラインを常時表示させる
 set laststatus=2
-" "
-" ステータス行に表示させる情報の指定(どこからかコピペしたので細かい意味はわかっていない)
+set binary noeol
+
+" ステータス行に表示させる情報の指定
 set statusline=%<%f\%m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
 
-" " ステータス行に現在のgitブランチを表示する
+" ステータス行に現在のgitブランチを表示する
 set statusline+=%{fugitive#statusline()}
-" " ウインドウのタイトルバーにファイルのパス情報等を表示する
+" ウインドウのタイトルバーにファイルのパス情報等を表示する
 set title
-" " コマンドラインモードで<Tab>キーによるファイル名補完を有効にする
+" コマンドラインモードで<Tab>キーによるファイル名補完を有効にする
 set wildmenu
-" " 入力中のコマンドを表示する
+" 入力中のコマンドを表示する
 set showcmd
-" バッファで開いているファイルのディレクトリでエクスクローラを開始する(でもエクスプローラって使ってない)
+" バッファで開いているファイルのディレクトリでエクスクローラを開始する
 set browsedir=buffer
 set expandtab
+set softtabstop=2
 set incsearch
 set hidden
-set list
 " タブと行の続きを可視化する
-set listchars=tab:>\ ,extends:<
+set listchars=tab:>.,trail:-,eol:$,nbsp:%
 
 set noswapfile
 set number "行番号を表示する
@@ -46,143 +103,43 @@ set smartindent "オートインデント
 set shiftwidth=2
 set smarttab
 set hlsearch
-" python indent
-autocmd FileType python setl autoindent
-autocmd FileType python setl smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-autocmd FileType python setl tabstop=8 expandtab shiftwidth=4 softtabstop=4
-
 "#####検索設定#####
 set ignorecase "大文字/小文字の区別なく検索する
 set smartcase "検索文字列に大文字が含まれている場合は区別して検索する
 set wrapscan "検索時に最後まで行ったら最初に戻る
 "###### クリップボード有効化
-set clipboard=unnamed
+set clipboard+=unnamed
 "######コメントをグレーにする
 hi Comment ctermfg=gray
 "######カーソル位置
 set ruler
 set cursorline
-"set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
 
-"####連続インデント↲
-vnoremap <silent> > >gv
-vnoremap <silent> < <gv
+set completeopt=menuone,noinsert,noselect
 
-""""""""""""""""""""""""""""""
-" プラグインのセットアップ
-""""""""""""""""""""""""""""""
-if has('vim_starting')
-set nocompatible      " Be iMproved
-filetype off
-" Required:
-set runtimepath+=~/.vim/bundle/neobundle.vim/
-endif
-
-" Required:
-call neobundle#begin(expand('~/.vim/bundle/'))
-call neobundle#load_cache()
-" Let NeoBundle manage NeoBundle
-" Required:
-NeoBundleFetch 'Shougo/neobundle.vim'
-
-NeoBundle 'junegunn/vim-easy-align'
-
-"for rails
-NeoBundle 'tpope/vim-rails'
-NeoBundle 'tpope/vim-endwise'
-
-"autoclose"
-NeoBundle 'Townk/vim-autoclose'
-
-" シングルクオートとダブルクオートの入れ替え等
-NeoBundle 'tpope/vim-surround'
-"vimshell
-NeoBundle 'Shougo/vimshell'
-NeoBundle 'Shougo/vimproc.vim', {
-      \ 'build' : {
-      \     'windows' : 'tools\\update-dll-mingw',
-      \     'cygwin' : 'make -f make_cygwin.mak',
-      \     'mac' : 'make -f make_mac.mak',
-      \     'linux' : 'make',
-      \     'unix' : 'gmake',
-      \    },
-      \ }
-" ファイルオープンを便利に
-NeoBundle 'Shougo/unite.vim'
-" Unite.vimで最近使ったファイルを表示できるようにする
-NeoBundle 'Shougo/neomru.vim'
-
-" シングルクオートとダブルクオートの入れ替え等
-NeoBundle 'tpope/vim-surround'
-
-" インデントに色を付けて見やすくする
-NeoBundle 'nathanaelkane/vim-indent-guides'
-
-" ログファイルを色づけしてくれる
-NeoBundle 'vim-scripts/AnsiEsc.vim'
-
-" 行末の半角スペースを可視化
-NeoBundle 'bronson/vim-trailing-whitespace'
-
-" Gitを便利に使う
-NeoBundle 'tpope/vim-fugitive'
-
-NeoBundle 'mattn/emmet-vim'
-
-"neocomplcache
-NeoBundle 'Shougo/neocomplcache'
-" 一括コメントアウト
-NeoBundle "tyru/caw.vim.git"
-"
-" """"""""""""""""""""""""""""""
-" ファイルをtree表示してくれる
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'tomtom/tcomment_vim'
-
-NeoBundle 'grep.vim'
-
-NeoBundleSaveCache
-call neobundle#end()
-
-" Required:
-filetype plugin indent on
-
-" If there are uninstalled bundles found on startup,
-" this will conveniently prompt you to install them.
-NeoBundleCheck
-
-" """"""""""""""""""""""""""""""
-" " Unit.vimの設定
-" """"""""""""""""""""""""""""""
-" " 入力モードで開始する
+" Unit.vimの設定
+" 入力モードで開始する
 let g:unite_enable_start_insert=1
-" " バッファ一覧
+" バッファ一覧
 noremap <C-P> :Unite buffer<CR>
-" " ファイル一覧
+" ファイル一覧
 noremap <C-N> :Unite -buffer-name=file file<CR>
-" " 最近使ったファイルの一覧
+" 最近使ったファイルの一覧
 noremap <C-Z> :Unite file_mru<CR>
-" " sourcesを「今開いているファイルのディレクトリ」とする
+" sourcesを「今開いているファイルのディレクトリ」とする
 noremap :uff :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
-" " ウィンドウを分割して開く
-au FileType unite nnoremap <silent> <buffer> <expr> <C-J>
-"unite#do_action('split')
-au FileType unite inoremap <silent> <buffer> <expr> <C-J>
-"unite#do_action('split')
-" " ウィンドウを縦に分割して開く
-au FileType unite nnoremap <silent> <buffer> <expr> <C-K>
-"unite#do_action('vsplit')
-au FileType unite inoremap <silent> <buffer> <expr> <C-K>
-"unite#do_action('vsplit')
-" " ESCキーを2回押すと終了する
+" ウィンドウを分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
+au FileType unite inoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
+" ウィンドウを縦に分割して開く
+au FileType unite nnoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
+au FileType unite inoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
+" ESCキーを2回押すと終了する
 au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
 au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 
-" Easy Align
-" Start interactive EasyAlign in visual mode (e.g. vip<Enter>)
-vmap <Enter> <Plug>(EasyAlign)
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
+" その他の設定は変更なし...
 
 function! ZenkakuSpace()
     highlight ZenkakuSpace cterm=underline ctermfg=lightblue guibg=darkgray
@@ -200,6 +157,26 @@ endif
 "挿入モード表示
 
 let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none ctermfg=blue ctermbg=yellow cterm=none'
+
+" asyncomplete.vim の設定
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_auto_completeopt = 0
+set completeopt=menuone,noinsert,noselect,preview
+
+" Tab で補完候補を選択
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
+
+" vim-lsp の設定
+let g:lsp_signs_enabled = 1
+let g:lsp_diagnostics_echo_cursor = 1
+
+" jbuilder ファイルでのコメントアウト (Ctrl + k)
+autocmd FileType jbuilder nnoremap <C-j> I#<Esc>
+autocmd FileType jbuilder vnoremap <C-j> :s/^/#/<CR>:nohl<CR>
+" autocmd FileType jbuilder let b:caw_wrap_open = '#'
+" autocmd FileType jbuilder let b:caw_wrap_close = ''
 
 if has('syntax')
 augroup InsertHook
@@ -232,11 +209,15 @@ endfunction" コメントON/OFFを手軽に実行
 " vimを立ち上げたときに、自動的にvim-indent-guidesをオンにする
 let g:indent_guides_enable_on_vim_startup = 1
 
-
 " grep検索の実行後にQuickFix Listを表示する
 autocmd QuickFixCmdPost *grep* cwindow
 
-
+" autocomplete
+" autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+" autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+" autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+" autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 "キーマッピング
 nnoremap s <Nop>
@@ -261,83 +242,74 @@ nnoremap st :<C-u>tabnew<CR>
 nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
 nnoremap sv :<C-u>vs<CR>
-nnoremap sq :<C-u>q!<CR>
+nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
 nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
 nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
-nnoremap <silent><C-e> :NERDTreeToggle<CR>
-noremap!  
 
-" vimshell setting
-let g:vimshell_interactive_update_time = 10
-let g:vimshell_prompt = "$ "
-let g:vimshell_user_prompt = 'getcwd()'
+autocmd FileType vue syntax sync fromstart
 
-" vimshell map
-nnoremap <silent> vs :VimShell<CR>
-nnoremap <silent> vsc :VimShellCreate<CR>
-nnoremap <silent> vp :VimShellPop<CR>
-" delete Space
-nnoremap <silent> dw :FixWhitespace<CR>
-" rails server start/stop
-nnoremap <silent> rs  :Rserver -b 192.168.33.16<CR>
-nnoremap <silent> rt :Rserver! -b 192.168.33.16<CR>
-
-" commentout
+nnoremap de :<C-u>FixWhitespace<CR>
+" tcomment_vim
 nmap <C-K> <Plug>(caw:i:toggle)
 vmap <C-K> <Plug>(caw:i:toggle)
 
+" continuous indent
+vnoremap <silent> > >gv
+vnoremap <silent> < <gv
+
+" Jedi is by default automatically initialized for python
+let g:jedi#auto_initialization = 0
+let g:jedi#use_tabs_not_buffers = 1
+
+if exists('g:loaded_syntastic_plugin')
+  set statusline+=%#warningmsg#
+  set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%*
+
+  let g:syntastic_always_populate_loc_list = 1
+  let g:syntastic_auto_loc_list = 1
+  let g:syntastic_check_on_open = 1
+  let g:syntastic_check_on_wq = 0
+endif
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_aggregate_errors = 1
+
+" https://qiita.com/muran001/items/9ce24525b3285678acc3#%E3%81%A1%E3%82%87%E3%81%A3%E3%81%A8%E3%81%A0%E3%81%91%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA
 let g:user_emmet_leader_key='<c-t>'
-let g:user_emmet_settings = {
-    \    'variables': {
-    \      'lang': "ja"
-    \    },
-    \   'indentation': '  '
-    \ }
 
-
-"" php syntax check
-augroup PHP
-  autocmd!
-  autocmd FileType php set makeprg=php\ -l\ %
-  " php -lの構文チェックでエラーがなければ「No syntax errors」の一行だけ出力される
-  autocmd BufWritePost *.php silent make | if len(getqflist()) != 1 | copen | else | cclose | endif
-augroup END
+" https://github.com/vim-syntastic/syntastic
+execute pathogen#infect()
 syntax on
+filetype plugin indent on
 
-"neocompelte
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplcache.
-let g:neocomplcache_enable_at_startup = 1
-" Use smartcase.
-let g:neocomplcache_enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+" 正規表現を普通にする
+" https://qiita.com/m-yamashita/items/5755ca2717c8d5be57e4
+nmap / /\v
 
-" Define dictionary.
-let g:neocomplcache_dictionary_filetype_lists = {
-    \ 'default' : ''
-\ }
-"
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplcache#undo_completion()
-inoremap <expr><C-l>     neocomplcache#complete_common_string()
+" vueファイルコメントアウト
+let g:ft = ''
+function! NERDCommenter_before()
+  if &ft == 'vue'
+    let g:ft = 'vue'
+    let stack = synstack(line('.'), col('.'))
+    if len(stack) > 0
+      let syn = synIDattr((stack)[0], 'name')
+      if len(syn) > 0
+        exe 'setf ' . substitute(tolower(syn), '^vue_', '', '')
+      endif
+    endif
+  endif
+endfunction
+function! NERDCommenter_after()
+  if g:ft == 'vue'
+    setf vue
+    let g:ft = ''
+  endif
+endfunction
 
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-" inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-" function! s:my_cr_function()
-"   return neocomplcache#smart_close_popup() . "\<CR>"
-" endfunction
-" "<TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>: "\<TAB>"
-" "<C-h>, <BS>: close popup and delete backword char.
-" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr><C-y>  neocomplcache#close_popup()
-" inoremap <expr><C-e>  neocomplcache#cancel_popup()
-
-" stop insert mode
-inoremap <silent> kk <ESC>
+NeoBundleCheck
