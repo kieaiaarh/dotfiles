@@ -1,48 +1,33 @@
-if has('vim_starting')
-  set nocompatible
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
-endif
+call plug#begin('~/.vim/plugged')
 
-call neobundle#begin(expand('~/.vim/bundle/'))
-NeoBundleFetch 'Shougo/neobundle.vim'
+" プラグインをここにリストアップ
+Plug 'mattn/emmet-vim'
+Plug 'tpope/vim-endwise'
+Plug 'posva/vim-vue'
+Plug 'nathanaelkane/vim-indent-guides'
+Plug 'vim-scripts/AnsiEsc.vim'
+Plug 'bronson/vim-trailing-whitespace'
+Plug 'scrooloose/nerdtree'
+Plug 'tyru/caw.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
-" プラグインのセットアップ
-" html 補完
-NeoBundle 'mattn/emmet-vim'
-NeoBundle 'tpope/vim-endwise'
-" ファイルオープンを便利に
-NeoBundle 'Shougo/unite.vim'
-" Unite.vimで最近使ったファイルを表示できるようにする
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'posva/vim-vue'
-" インデントに色を付けて見やすくする
-NeoBundle 'nathanaelkane/vim-indent-guides'
-" 高度な補完機能
-" NeoBundle 'neoclide/coc.nvim', {'branch': 'release'}
-" ログファイルを色づけしてくれる
-NeoBundle 'vim-scripts/AnsiEsc.vim'
-" 行末の半角スペースを可視化
-NeoBundle 'bronson/vim-trailing-whitespace'
-" ファイルをtree表示してくれる
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle "tyru/caw.vim.git"
+call plug#end()
 
-NeoBundle 'prabirshrestha/asyncomplete.vim'
-NeoBundle 'prabirshrestha/asyncomplete-lsp.vim'
-NeoBundle 'prabirshrestha/vim-lsp'
-NeoBundle 'mattn/vim-lsp-settings'
-
-
-call neobundle#end()
-filetype plugin indent on
-
-" 補完機能を有効
-set completeopt=menu,menuone,noselect
-set shortmess+=c
-augroup AutoComplete
-  autocmd!
-  autocmd TextChangedI * call feedkeys("\<C-n>", 't')
-augroup END
+call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+    \ 'name': 'buffer',
+    \ 'allowlist': ['*'],
+    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+    \ }))
+call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+    \ 'name': 'file',
+    \ 'allowlist': ['*'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#file#completor')
+    \ }))
 
 " 改行コード
 set fileformats=unix,dos,mac
@@ -116,28 +101,31 @@ set ruler
 set cursorline
 set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
 
-set completeopt=menuone,noinsert,noselect
-
 " Unit.vimの設定
 " 入力モードで開始する
-let g:unite_enable_start_insert=1
+" let g:unite_enable_start_insert=1
+" fzf.vim の設定
+"nnoremap :Files
+"nnoremap b :Buffers
+nnoremap <C-p> :Files<CR>
+nnoremap <Leader>b :Buffers<CR>
 " バッファ一覧
-noremap <C-P> :Unite buffer<CR>
+" noremap <C-P> :Unite buffer<CR>
 " ファイル一覧
-noremap <C-N> :Unite -buffer-name=file file<CR>
+" noremap <C-N> :Unite -buffer-name=file file<CR>
 " 最近使ったファイルの一覧
-noremap <C-Z> :Unite file_mru<CR>
+" noremap <C-Z> :Unite file_mru<CR>
 " sourcesを「今開いているファイルのディレクトリ」とする
-noremap :uff :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
+" noremap :uff :<C-u>UniteWithBufferDir file -buffer-name=file<CR>
 " ウィンドウを分割して開く
-au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
-au FileType unite inoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
+" au FileType unite nnoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
+" au FileType unite inoremap <silent> <buffer> <expr> <C-J> unite#do_action('split')
 " ウィンドウを縦に分割して開く
-au FileType unite nnoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
-au FileType unite inoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
+" au FileType unite nnoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
+" au FileType unite inoremap <silent> <buffer> <expr> <C-K> unite#do_action('vsplit')
 " ESCキーを2回押すと終了する
-au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
-au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+" au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
+" au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
 
 " その他の設定は変更なし...
 
@@ -160,17 +148,22 @@ let g:hi_insert = 'highlight StatusLine guifg=darkblue guibg=darkyellow gui=none
 
 " asyncomplete.vim の設定
 let g:asyncomplete_auto_popup = 1
-let g:asyncomplete_auto_completeopt = 0
-set completeopt=menuone,noinsert,noselect,preview
+let g:asyncomplete_auto_completeopt = 1
+" set completeopt=menuone,noinsert,noselect,preview
+set completeopt=menuone,noinsert,preview
+
+set completeopt=menu,menuone,noselect
+" set shortmess+=c
+" 補完機能を有効
+augroup AutoComplete
+  autocmd!
+  " autocmd TextChangedI * call feedkeys("\<C-n>", 't')
+augroup END
 
 " Tab で補完候補を選択
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
-
-" vim-lsp の設定
-let g:lsp_signs_enabled = 1
-let g:lsp_diagnostics_echo_cursor = 1
 
 " jbuilder ファイルでのコメントアウト (Ctrl + k)
 autocmd FileType jbuilder nnoremap <C-j> I#<Esc>
@@ -239,24 +232,42 @@ nnoremap sO <C-w>=
 nnoremap sN :<C-u>bn<CR>
 nnoremap sP :<C-u>bp<CR>
 nnoremap st :<C-u>tabnew<CR>
-nnoremap sT :<C-u>Unite tab<CR>
 nnoremap ss :<C-u>sp<CR>
 nnoremap sv :<C-u>vs<CR>
 nnoremap sq :<C-u>q<CR>
 nnoremap sQ :<C-u>bd<CR>
-nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
-nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
+" nnoremap sT :<C-u>Unite tab<CR>
+" nnoremap sb :<C-u>Unite buffer_tab -buffer-name=file<CR>
+" nnoremap sB :<C-u>Unite buffer -buffer-name=file<CR>
+
+" タブ一覧（fzf.vimには直接的な対応機能がないため、代替として:Tabsを使用）
+nnoremap sT :Tabs<CR>
+" バッファ一覧
+nnoremap sb :Buffers<CR>
+nnoremap sB :Buffers<CR>
 
 autocmd FileType vue syntax sync fromstart
 
 nnoremap de :<C-u>FixWhitespace<CR>
+" nnoremap <Leader>fw :FixWhitespace<CR>
 " tcomment_vim
 nmap <C-K> <Plug>(caw:i:toggle)
 vmap <C-K> <Plug>(caw:i:toggle)
+" caw.vim (コメントアウト)
+
+"nmap <Leader>c <Plug>(caw:i:toggle)
+"vmap <Leader>c <Plug>(caw:i:toggle)
+
+nmap <D-k> <Plug>(caw:i:toggle)
+imap <D-k> <Esc><Plug>(caw:i:toggle)
+vmap <D-k> <Plug>(caw:i:toggle)
 
 " continuous indent
-vnoremap <silent> > >gv
-vnoremap <silent> < <gv
+" vnoremap <silent> > >gv
+" vnoremap <silent> < <gv
+" continuous indent
+vnoremap > >gv
+vnoremap < <gv
 
 " Jedi is by default automatically initialized for python
 let g:jedi#auto_initialization = 0
@@ -311,5 +322,3 @@ function! NERDCommenter_after()
     let g:ft = ''
   endif
 endfunction
-
-NeoBundleCheck
