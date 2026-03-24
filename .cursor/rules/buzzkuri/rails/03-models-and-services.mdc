@@ -1,0 +1,17 @@
+---
+description: ActiveRecordモデルおよびServiceクラスの実装ルール
+globs:
+  - "app/models/**/*.rb"
+  - "app/services/**/*.rb"
+---
+# モデル・サービス実装のガイドライン
+
+## Models (`app/models/*`)
+- ActiveRecordとConcernsを利用して構成すること。
+- バリデーションやスコープなど、データに関する責務を持たせる。
+
+## Services (`app/services/*`)
+- トランザクションスクリプトや複数モデルにまたがる複雑な処理はService層に記述する。
+- 全てのServiceは `BaseService` を継承すること。
+- 公開メソッドは原則として `#execute` のみを実装すること。
+- Testableな設計を心がけること。

@@ -1,0 +1,25 @@
+---
+description: Docker運用、Makefile、開発ワークフロー、PR作成規約
+globs: "*"
+alwaysApply: false
+---
+# 運用・開発ワークフロー
+
+## Docker & Makefile運用
+- 本プロジェクトはDockerコンテナ運用を前提とする。開発操作は基本的に `Makefile` と `README` に従うこと。
+- コマンド実行はコンテナ内（`docker-compose exec`等）を前提とする。
+- ワークフロー最小構成:
+  - 1ブランチ=1API（ベースは `compliance-police/main`）
+  - 実装 → Jbuilder → `make fix-changed`
+  - テスト → `make test-changed`
+
+## コミットとPR規約
+- コミット時は `.gitmessage` に従うこと（日本語統一・絵文字を適切に使う）。
+- 各種コメント、ログ、Rakeタスクも日本語に統一。
+- PRタイトル例: `[API] GET /compliance/api/events`
+- PR本文要件:
+  - 変更概要 / スコープ外
+  - 動作確認（curl例 or スクショ）
+  - 新規/編集RSpec一覧と結果
+  - OpenAPI断片（日本語サマリー）
+  - チェックリスト（RSpec green、Jbuilder locals渡し、省略語なし）
