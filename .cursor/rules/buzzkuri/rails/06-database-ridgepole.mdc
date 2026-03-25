@@ -1,0 +1,11 @@
+---
+description: データベース管理およびRidgepoleの運用ルール
+globs:
+  - "db/Schemafile"
+  - "app/models/**/*.rb"
+---
+# データベース管理ガイドライン
+
+- **スキーマ管理**: DBは MySQL 8.4 を使用し、`db/Schemafile` (Ridgepole) が唯一のスキーマソースである。
+- **禁止事項**: ActiveRecord標準のマイグレーション (`rails generate migration`) は**絶対に使用禁止**。
+- DB変更が必要な場合は必ずRidgepoleを使用し、AI単独で判断せず「必ずマイグレーション作成をユーザーに依頼」すること。

@@ -1,0 +1,10 @@
+---
+description: View層（Jbuilder、HAML等）の実装ルール
+globs: "app/views/**/*.{jbuilder,erb,haml}"
+---
+# View層の実装ガイドライン
+
+- **Jbuilder必須**: JSONレスポンスの生成には必ずJbuilderを使用すること。
+- **変数の渡し方**: コントローラでのインスタンス変数（`@hoge`）の過度な多用は禁止。必ず `locals` を使って明示的に変数を渡すこと。
+  - 例: `render :index, locals: { items:, next_cursor: }`
+- **HAML**: HAMLを使用する場合は `haml-lint` に準拠すること。
