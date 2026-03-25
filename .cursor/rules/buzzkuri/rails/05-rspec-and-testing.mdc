@@ -1,6 +1,6 @@
 ---
 description: RSpecテストの実装ルールとコード品質要件
-globs: 
+globs:
   - "spec/**/*.rb"
   - "app/**/*.rb"
 ---
@@ -8,9 +8,10 @@ globs:
 
 ## RSpec 実装ルール
 - Request Spec は **Controller単位のファイル** とし、Action別に分割しないこと。
-- `let` / `subject` / `before` を活用し、DRYかつ読みやすいテストにすること。
+- `it`で手続型にするでなく、データの定義は`let` / `subject` / `before` を活用し、DRYかつ読みやすいテストにすること。
 - `describe`, `context` などの記述はすべて**日本語に統一**すること。
+- model, serviceのテストは特に、shoulda-matchersが活用できる箇所は積極的に使うこと
 
 ## 開発の完了定義 (DoD)
 - **テストの必須化**: 新規ファイル作成・変更時は関連するspecを追加・更新し、必ずGreenにすること。未編集の既存失敗はスコープ外で良い。
-- **RuboCopの解消**: 変更を行った場合、`bundle exec rubocop` を実行し、すべての警告・エラーを解消しなければならない。
+- **RuboCopの解消**: 変更を行った場合、**`make rubocop_exec TARGET='path1 path2'`** または **`make rubocop_run TARGET='path1 path2'`** で指摘を解消すること（ホストでの `bundle exec rubocop` 単独実行は `07-workflow-and-pr.mdc` に従い避ける）。

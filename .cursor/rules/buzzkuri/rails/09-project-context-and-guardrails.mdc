@@ -1,0 +1,33 @@
+---
+description: AGENTS 準拠の優先順位、運用プロファイル、技術スタック要約、Guardrails、routes/Nginx 注意
+globs: "*"
+alwaysApply: true
+---
+# プロジェクト文脈と Guardrails（AGENTS.md との整合）
+
+## 判断の優先順位
+- **直接のユーザー指示** > **AGENTS.md**（リポジトリ直下）> **既存コードの慣習** > **`.github/workflows` の CI 設定**
+- AGENTS.md に無い細部は、既存実装と CI を最優先に合わせること。
+
+## 運用プロファイル（エージェント）
+- **readonly**: 設計・調査のみ。コード変更なし。外部ネットワークは使わない。
+- **unattended**: 短時間の自動実行は検証向けに限定。開始前にブランチを切ること。**外部通信**や**破壊的な DB 操作**は行わない。
+
+## 技術スタック（要約・AGENTS.md 相当）
+- DB: MySQL 8.4。スキーマの唯一のソースは **`db/Schemafile`（Ridgepole）**。AR マイグレーションは禁止（詳細は `06-database-ridgepole.mdc`）。
+- バックグラウンド: Sidekiq 5.x（Redis。キュー例: default, mailers, translations）。
+- 認可: Pundit（`app/policies/`）。ジョブ: ActiveJob（`queue_as` 必須。詳細は `03-models-and-services.mdc`）。
+- テスト: RSpec（必要に応じ Selenium Headless Chrome, FactoryBot, Shoulda）。
+- API ドキュメント: rswag（`swagger/`）。アップロード: CarrierWave + S3。PDF: Wicked PDF。
+- フロント資産: Webpack 5 + Yarn。メール等: SendGrid。
+
+## Guardrails
+- **Controller** は必ずドメインに応じた基底コントローラを継承すること（例: `Compliance::ApiController`）。詳細は `02-controllers.mdc`。
+- **セキュリティ**: 秘密情報は Rails Credentials。Brakeman は CI で実行される想定。CORS は環境別設定に従うこと。
+
+## `config/routes.rb` とインフラ
+- `routes.rb` は巨大なため、**必要最小限の差分**でルートを追加すること。
+- フロント別プロセスやプロキシに影響する変更では **Nginx 設定**を確認すること（README / インフラドキュメント）。
+
+## Cursor / チーム運用
+- `projects.{path}.trust_level="trusted"` は任意（承認プロンプト削減用）。セキュリティ方針に合わせて設定すること。

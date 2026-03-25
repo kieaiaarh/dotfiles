@@ -1,17 +1,39 @@
 ---
 description: Docker運用、Makefile、開発ワークフロー、PR作成規約
 globs: "*"
-alwaysApply: false
+alwaysApply: true
 ---
 # 運用・開発ワークフロー
 
 ## Docker & Makefile運用
 - 本プロジェクトはDockerコンテナ運用を前提とする。開発操作は基本的に `Makefile` と `README` に従うこと。
 - コマンド実行はコンテナ内（`docker-compose exec`等）を前提とする。
+- **RuboCop**: `bundle exec rubocop` をホストや任意の `docker compose run` で単独実行しない。**`make rubocop_(run|exec) TARGET='path1 path2'`**（または Makefile / README に定義された同等ターゲット）を使うこと。
+- **RSpec**: 同様に **`make rspec_(run|exec) FILES='...'`** を優先する。
+- AGENTS.md に `make fix-changed` / `make test-changed` とあるが、リポジトリの Makefile に無い場合は、変更ファイルに対して上記 `rubocop_(run|exec)` / `rspec_(run|exec)` で代替する。
+- **RuboCop のインライン `rubocop:disable`**: 付与する前に **必ず `make rubocop_(run|exec)` で同一指摘が再現すること**。再現しない「念のため」の抑制は禁止。プロジェクト全体で Cop が不適切なら **`.rubocop.yml` で `Enabled: false` や `Exclude`** とし、理由をコメントで残す。
+- **compliance / 検知ルール統合ブランチ**: Phase 作業用ブランチを切る前に `git fetch origin feat/business-detection-rule-guardrails` し、ベースは **`origin/feat/business-detection-rule-guardrails`** を使う（`master` 直切りにしない）。
 - ワークフロー最小構成:
   - 1ブランチ=1API（ベースは `compliance-police/main`）
-  - 実装 → Jbuilder → `make fix-changed`
-  - テスト → `make test-changed`
+  - 実装 → Jbuilder → Lint（Makefile 経由）→ テスト（Makefile 経由）
+
+## AGENTS.md の便利コマンドと Makefile の対応
+- **絶対ルール**: ホストで `docker compose …` を直接叩かず、**Makefile** と **README** を正とする（詳細手順は README）。
+- **Bundler**: `make bundle_install`（新規コンテナ） / `make bundle_install_exec`（起動中コンテナ）
+- **DB 起動**: Rails 用 compose 内 DB は `make db_up_d`。MySQL 8.4 専用 compose は `make db_up_8.4`。初回の作成+Ridgepole 込みは `make db_setup`（待機は `make db_wait`）。並列テスト準備は `make db_setup_parallel`。詳細は README と照合すること。
+- **Ridgepole 適用（development + test）**: `make ridgepole_apply` または一連の準備込みなら `make db_migrate`
+- **テスト DB のみ Schemafile 適用**: `make test_db_prepare`
+- **RSpec**: `make rspec_exec FILES='spec/...'`（コンテナ exec） / `make rspec_run FILES='spec/...'`（run）
+- **RuboCop**: `make rubocop_exec TARGET='app/...'` / `make rubocop_run TARGET='app/...'`
+- **Rails コンソール**: `make rails_c`（development） / `make rails_c_s`（test）
+- **Rake**: `make rake_exec TASK=タスク名` / `make rake_run TASK=タスク名`
+- **bin/setup・tmp/start_db.sh・tmp/migrate_db.sh**: ホスト／従来手順として AGENTS.md にある場合は、**チームの README が Makefile 運用に移行済みなら Makefile を優先**すること。
+- **Brakeman**: Makefile に専用ターゲットが無い場合は、Rails コンテナ内で `bundle exec brakeman -A -w1`（例: `make rails_shell` 後）。CI は `.github/workflows` に従う。
+
+## PR の粒度（必須）
+- **レビュー負荷・ロールバック・リリースリスクを小さくする単位**で PR を分割すること。可能な限り **1 PR = 1 論理変更**（例: Issue の 4-1 のみ、単一 API のみ）とし、無関係なリファクタや別タスクを混ぜない。
+- 密結合で分割が非現実な場合のみ、**依存関係が明確な最小まとまり**に留める（理由を PR 本文に書く）。
+- 大きな機能ブランチへの「ついで修正」は別 PR に分ける。
 
 ## コミットとPR規約
 - コミット時は `.gitmessage` に従うこと（日本語統一・絵文字を適切に使う）。
