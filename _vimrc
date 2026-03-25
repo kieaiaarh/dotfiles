@@ -14,6 +14,7 @@ Plug 'prabirshrestha/asyncomplete-buffer.vim'
 Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'leafgarland/typescript-vim'
 
 call plug#end()
 
@@ -28,6 +29,12 @@ call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
     \ 'priority': 10,
     \ 'completor': function('asyncomplete#sources#file#completor')
     \ }))
+
+" TypeScript syntax の暴走回避
+" set re=0
+
+" 長い行でsyntaxが死ぬのを止める
+set synmaxcol=200
 
 " 改行コード
 set fileformats=unix,dos,mac
@@ -44,7 +51,7 @@ else
 endif
 
 " https://vim-jp.org/vimdoc-ja/options.html#'maxmempattern'
-set maxmempattern=1000000
+set maxmempattern=5000
 " backspace working
 set backspace=indent,eol,start
 highlight LineNr ctermfg=darkyellow
@@ -60,7 +67,10 @@ set binary noeol
 set statusline=%<%f\%m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
 
 " ステータス行に現在のgitブランチを表示する
-set statusline+=%{fugitive#statusline()}
+if exists('*fugitive#statusline')
+  set statusline+=%{fugitive#statusline()}
+endif
+
 " ウインドウのタイトルバーにファイルのパス情報等を表示する
 set title
 " コマンドラインモードで<Tab>キーによるファイル名補完を有効にする
@@ -136,11 +146,22 @@ endfunction
 if has('syntax')
 	augroup ZenkakuSpace
 	autocmd!
+  " autocmd BufRead,BufNewFile * if &filetype !~# 'typescript\|javascript' | let w:m1=matchadd('ZenkakuSpace', '　') | endif
 	autocmd ColorScheme * call ZenkakuSpace()
 	autocmd VimEnter,WinEnter,BufRead * let w:m1=matchadd('ZenkakuSpace', '　')
 	augroup END
 	call ZenkakuSpace()
 endif
+
+augroup TsSyntaxTuning
+  autocmd!
+  autocmd FileType typescript,typescriptreact syntax sync minlines=10 maxlines=200
+augroup END
+
+augroup TsSafe
+  autocmd!
+  autocmd FileType typescript,typescriptreact setlocal re=0
+augroup END
 
 "挿入モード表示
 
@@ -166,10 +187,10 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 
 " jbuilder ファイルでのコメントアウト (Ctrl + k)
-autocmd FileType jbuilder nnoremap <C-j> I#<Esc>
-autocmd FileType jbuilder vnoremap <C-j> :s/^/#/<CR>:nohl<CR>
-" autocmd FileType jbuilder let b:caw_wrap_open = '#'
-" autocmd FileType jbuilder let b:caw_wrap_close = ''
+autocmd FileType jbuilder setlocal commentstring=#\ %s
+autocmd FileType jbuilder let b:caw_oneline_comment = '#'
+autocmd BufNewFile,BufRead *.jbuilder set filetype=ruby
+autocmd FileType ruby,eruby,jbuilder setlocal commentstring=#\ %s
 
 if has('syntax')
 augroup InsertHook
@@ -200,7 +221,7 @@ function! s:GetHighlight(hi)
 endfunction" コメントON/OFFを手軽に実行
 
 " vimを立ち上げたときに、自動的にvim-indent-guidesをオンにする
-let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_enable_on_vim_startup = 0
 
 " grep検索の実行後にQuickFix Listを表示する
 autocmd QuickFixCmdPost *grep* cwindow
@@ -249,18 +270,13 @@ nnoremap sB :Buffers<CR>
 autocmd FileType vue syntax sync fromstart
 
 nnoremap de :<C-u>FixWhitespace<CR>
-" nnoremap <Leader>fw :FixWhitespace<CR>
-" tcomment_vim
-nmap <C-K> <Plug>(caw:i:toggle)
-vmap <C-K> <Plug>(caw:i:toggle)
+nmap <C-k> <Plug>(caw:hatpos:toggle)
+vmap <C-k> <Plug>(caw:hatpos:toggle)
+let g:caw_operator_keymappings = 1
 " caw.vim (コメントアウト)
-
-"nmap <Leader>c <Plug>(caw:i:toggle)
-"vmap <Leader>c <Plug>(caw:i:toggle)
-
-nmap <D-k> <Plug>(caw:i:toggle)
-imap <D-k> <Esc><Plug>(caw:i:toggle)
-vmap <D-k> <Plug>(caw:i:toggle)
+nmap <D-k> <Plug>(caw:hatpos:toggle)
+imap <D-k> <Esc><Plug>(caw:hatpos:toggle)
+vmap <D-k> <Plug>(caw:hatpos:toggle)
 
 " continuous indent
 " vnoremap <silent> > >gv
@@ -272,6 +288,7 @@ vnoremap < <gv
 " Jedi is by default automatically initialized for python
 let g:jedi#auto_initialization = 0
 let g:jedi#use_tabs_not_buffers = 1
+
 
 if exists('g:loaded_syntastic_plugin')
   set statusline+=%#warningmsg#
@@ -298,6 +315,15 @@ execute pathogen#infect()
 syntax on
 filetype plugin indent on
 
+filetype on
+filetype plugin on
+filetype indent on
+
+autocmd BufNewFile,BufRead *.ts,*.tsx setfiletype typescript
+autocmd FileType typescript,typescriptreact setlocal synmaxcol=200
+autocmd FileType typescript,typescriptreact syntax off
+
+
 " 正規表現を普通にする
 " https://qiita.com/m-yamashita/items/5755ca2717c8d5be57e4
 nmap / /\v
@@ -322,3 +348,5 @@ function! NERDCommenter_after()
     let g:ft = ''
   endif
 endfunction
+
+
