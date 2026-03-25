@@ -17,6 +17,10 @@ alwaysApply: true
    - endレス定義の積極活用（例: `def granted?(org) = org.consented_at && ...`）
 5. エラー処理は専用メソッドに分離すること。
 
+# Ruby ソースの絶対ルール（マジックコメント）
+- **`# frozen_string_literal: true` / `false` を書かない。** ファイル先頭や行途中に付与しない。Ruby 3.3 の既定挙動に任せ、冗長な pragma は増やさない。既存ファイルからも削除する（エージェント・人手ともに新規追加禁止）。
+- 理由: チーム方針として可読性・ノイズ削減を優先し、本リポジトリでは RuboCop の `Style/FrozenStringLiteralComment` は無効のため必須でもない。
+
 # コマンドの絶対ルール
 - Makefileから適切なコマンドを選んで実行すること
 - docker-compose xxxといったコマンドは使うことは禁止する
