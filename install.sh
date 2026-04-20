@@ -32,6 +32,43 @@ link "$DOTFILES_DIR/ai/claude/mystatus.sh"      "$CLAUDE_DIR/mystatus.sh"
 link "$DOTFILES_DIR/ai/claude/commands/think.md" "$CLAUDE_DIR/commands/think.md"
 
 echo ""
+echo "=== プロジェクトリポの .git/info/exclude 設定 ==="
+
+# AI制御ファイルをUntrackedに出さないためのローカル除外設定
+# プロジェクトリポのパスを列挙する
+PROJECT_REPOS=(
+  "$HOME/work/buzzkuri/backend"
+  "$HOME/work/buzzkuri/columns"
+  "$HOME/work/buzzkuri/infra"
+  "$HOME/work/buzzkuri/compliance_admin"
+  "$HOME/work/buzzkuri/internal_lambdas"
+)
+
+EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/rules/")
+
+for repo in "${PROJECT_REPOS[@]}"; do
+  if [ ! -d "$repo/.git" ]; then
+    echo "スキップ（.gitなし）: $repo"
+    continue
+  fi
+
+  exclude_file="$repo/.git/info/exclude"
+  updated=0
+  for pattern in "${EXCLUDE_PATTERNS[@]}"; do
+    if ! grep -qF "$pattern" "$exclude_file" 2>/dev/null; then
+      echo "$pattern" >> "$exclude_file"
+      updated=1
+    fi
+  done
+
+  if [ "$updated" -eq 1 ]; then
+    echo "除外設定を追加: $repo"
+  else
+    echo "変更なし: $repo"
+  fi
+done
+
+echo ""
 echo "=== 手動対応が必要なもの ==="
 echo "1. ~/.claude.json: ai/claude/claude.json.template を参考にトークンを設定"
 echo "   (claude login で再認証すれば自動生成されます)"
