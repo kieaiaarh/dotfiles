@@ -3,11 +3,18 @@
 # repos.local は gitignore 対象
 #
 # フォーマット: <パス> <テンプレート種別>
-# テンプレート種別: rails / nextjs / infra-cdk / wordpress
+# テンプレート種別: rails / nextjs / infra-cdk / wordpress / serverless / static
 # env ファイルは buzzkuri/_templates/<種別>/.env.local を自動参照する
 
 ~/work/buzzkuri/backend rails
 ~/work/buzzkuri/columns wordpress
 ~/work/buzzkuri/infra infra-cdk
-~/work/buzzkuri/compliance_admin rails
-~/work/buzzkuri/internal_lambdas rails
+~/work/buzzkuri/ai-infra infra-cdk
+~/work/buzzkuri/compliance_admin nextjs
+~/work/buzzkuri/internal_lambdas serverless
+~/work/buzzkuri/account nextjs
+~/work/buzzkuri/buzzkuri-frontend nextjs
+~/work/buzzkuri/compliance nextjs
+~/work/buzzkuri/compliance_top static
+~/work/buzzkuri/partner nextjs
+~/work/buzzkuri/portal nextjs

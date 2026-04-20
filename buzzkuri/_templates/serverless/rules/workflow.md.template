@@ -1,0 +1,30 @@
+---
+description: 開発ワークフロー・PR規約（全ファイルに適用）
+---
+
+# 開発ワークフロー・PR規約
+
+## コマンド（必ずこれを使う）
+
+- 型チェック: `npx tsc --noEmit`
+- Lint: `npm run lint`
+- テスト: `npm run test`
+- ローカル実行: `npx serverless invoke local --function <name>`
+- デプロイ: Makefile ターゲットを使うこと（`serverless deploy` 直接実行禁止）
+
+## PRの粒度（必須）
+
+- **1PR = 1論理変更**を原則とする。無関係なリファクタ・別タスクを混ぜない
+
+## コミット・PR
+
+- `.gitmessage` に従うこと（日本語統一・絵文字を適切に使う）
+- PRタイトル例: `[Lambda] Slack → GitHub dispatch ハンドラ追加`
+- PR本文必須項目: 変更概要 / スコープ外 / 動作確認 / 新規編集テスト一覧
+
+## DoD
+
+- `tsc --noEmit` が通ること
+- ESLint エラーなし
+- 秘密情報がコードに含まれていないこと
+- 省略語なし命名

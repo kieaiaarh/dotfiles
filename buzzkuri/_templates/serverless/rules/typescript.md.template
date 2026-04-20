@@ -1,0 +1,26 @@
+---
+description: TypeScript コーディング規約（.ts ファイルに適用）
+paths:
+  - "**/*.ts"
+---
+
+# TypeScript コーディング規約
+
+## 型安全
+
+- strict mode 必須。`any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
+- AWS Lambda イベント型は `@types/aws-lambda` の型を使う（自前定義禁止）
+- `as` キャストは型ガード関数で代替できる場合は禁止
+
+## ハンドラ設計
+
+- ハンドラは薄く保つ。ロジックは `services/` に分離する
+- エラーハンドリングはハンドラ層で行い、services/ から例外をバブルさせる
+- 省略語禁止
+- コメント・ログ・テストの describe/it はすべて日本語統一
+
+## Guardrails
+
+- `console.log` をコミットに含めない
+- 秘密情報（トークン・APIキー）はコードに直書き禁止。SSM / Secrets Manager から取得すること
+- IAM ポリシーは最小権限原則。`*` アクション・リソースは禁止
