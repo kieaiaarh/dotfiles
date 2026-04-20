@@ -1,0 +1,31 @@
+# RSpec テスト規約
+
+## 構造
+- Request Spec は **Controller単位のファイル**。Action別に分割しない。
+- `it` で手続き的に書かない。`let` / `subject` / `before` を活用してDRYに書くこと。
+- `describe`, `context`, `it` の記述はすべて**日本語に統一**すること。
+
+## shoulda-matchers
+- model / service のテストでは、使える箇所は**積極的に採用**すること。
+- 目的: 冗長なexpectブロックを減らし、テストの意図を宣言的に読み取れるようにする。
+- 例:
+  ```ruby
+  # 良い例
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to have_many(:posts).dependent(:destroy) }
+
+  # 避ける例（shoulda-matchersで書けるのに手続き的に書いている）
+  it 'validates presence of name' do
+    model = described_class.new(name: nil)
+    expect(model).not_to be_valid
+  end
+  ```
+
+## RuboCop
+- 変更ファイルに対して必ず実行: `make rubocop_exec TARGET='app/path1 app/path2'`
+- `rubocop:disable` のインライン付与は、上記コマンドで**同一指摘が再現した場合のみ**許可。
+- 「念のため」の抑制は禁止。プロジェクト全体で不適切なCopは `.rubocop.yml` で `Enabled: false` / `Exclude` で対応し、理由をコメントに残す。
+
+## DoD
+- 新規・編集したSpecは必ずGreen。未編集の既存失敗はスコープ外でよい。

@@ -1,0 +1,17 @@
+# Ruby コーディング規約
+
+## frozen_string_literal（絶対禁止）
+- `# frozen_string_literal: true / false` をファイル先頭に**書かない**。既存ファイルにあれば削除する。
+- 理由: RuboCop の `Style/FrozenStringLiteralComment` は無効化済み。ノイズを増やさない。
+
+## エラー処理
+- エラー処理は専用メソッドに分離すること。メインロジックに rescue を混在させない。
+
+## 命名
+- メソッド名は「形容詞＋名詞」で意図を明示（例: `masked_content`, `expired_tokens`）
+- 省略語禁止（例: `ms/*` は不可、`microsoft/*` を使う）
+- `self.table_name =` の明示的定義は不要。Railsの命名規則で解決できるようにすること。
+
+## Ruby {{RUBY_VERSION}}記法
+- ハッシュ省略 `{ aa: }` を積極活用
+- endレス定義を積極活用（例: `def granted?(org) = org.consented_at && ...`）

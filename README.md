@@ -73,17 +73,65 @@ Sentryのアクセストークンは [Sentry の設定画面](https://sentry.io/
 
 ---
 
-### 新規プロジェクト立ち上げ時
+### 新規プロジェクト立ち上げ時 / 既存プロジェクトへの反映
 
-`buzzkuri/_templates/` 配下にプロジェクト種別ごとのテンプレートがあります。
+`scripts/sync-rules-to-project.sh` を使います。
+
+#### 手順
+
+**1. envファイルを作成する**
 
 ```bash
-# 例: Railsプロジェクト
-cp buzzkuri/_templates/rails/CLAUDE.md.template /path/to/new-project/CLAUDE.md
-cp buzzkuri/_templates/rails/claude-settings.json.template /path/to/new-project/.claude/settings.json
+cp buzzkuri/_templates/rails/.env.template buzzkuri/_templates/rails/.env.local
+# .env.local を編集してプロジェクトの実際の値を入力
 ```
 
-`{{RUBY_VERSION}}` 等のプレースホルダーをプロジェクトに合わせて置き換えてください。
+`.env.local` の内容例：
+
+```
+PROJECT_NAME=buzzkuri/backend
+RUBY_VERSION=3.3.6
+RAILS_VERSION=6.1.7.2
+DB_ENGINE=MySQL 8.4
+DB_SCHEMA_TOOL=Ridgepole
+JOB_FRAMEWORK=Sidekiq 5.x
+API_DOC_TOOL=rswag
+UPLOAD_TOOL=CarrierWave + S3
+MAILER_TOOL=SendGrid
+PROJECT_NAMESPACE=compliance/api
+```
+
+> `.env.local` は `.gitignore` 対象なのでコミットされません。
+
+**2. syncスクリプトを実行する**
+
+dotfilesのルートから実行する場合：
+
+```bash
+# どちらでも動く
+bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
+./scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
+```
+
+別ディレクトリから実行する場合はフルパスで：
+
+```bash
+~/work/buzzkuri/dotfiles/scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend ~/work/buzzkuri/dotfiles/buzzkuri/_templates/rails/.env.local
+```
+
+スクリプトが行うこと：
+- `.claude/rules/*.md` を自動生成（プレースホルダーを置換済み）
+- `CLAUDE.md` が存在しない場合はテンプレートからコピー＆置換
+- `CLAUDE.md` が既存の場合はdiffを表示して手動マージを案内
+
+**3. プロジェクトリポで確認・コミット**
+
+```bash
+cd /path/to/project
+git diff
+git add .claude/rules/ CLAUDE.md
+git commit -m "📝: Claude rulesファイルを追加"
+```
 
 | テンプレート | 用途 |
 |---|---|
@@ -91,3 +139,17 @@ cp buzzkuri/_templates/rails/claude-settings.json.template /path/to/new-project/
 | `buzzkuri/_templates/nextjs/` | Next.js フロントエンド |
 | `buzzkuri/_templates/infra-cdk/` | AWS CDK インフラ |
 | `buzzkuri/_templates/wordpress/` | WordPress / Docker |
+
+---
+
+### テンプレート更新時の標準フロー
+
+```
+dotfilesのテンプレートを編集
+    ↓
+git commit & push → PR → マージ
+    ↓
+bash scripts/sync-rules-to-project.sh <種別> <プロジェクトパス> <envファイル>
+    ↓
+プロジェクトリポで git diff 確認 → commit & push → PR
+```
