@@ -119,10 +119,20 @@ else
   tmp_file=$(mktemp)
   cp "$CLAUDE_TEMPLATE" "$tmp_file"
   apply_env "$tmp_file"
-  echo "CLAUDE.md は既存のため自動更新しません。差分を参考に手動でマージしてください:"
+  echo "CLAUDE.md が既存のため差分を表示します:"
   echo "  (- がテンプレート側、+ が既存ファイル側)"
   echo ""
   diff -u "$tmp_file" "$PROJECT_CLAUDE" || true
+  echo ""
+  printf "テンプレートで上書きしますか？ [y/N]: "
+  read -r answer
+  if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+    cp "$tmp_file" "$PROJECT_CLAUDE"
+    echo "上書きしました: CLAUDE.md"
+    UPDATED=$((UPDATED + 1))
+  else
+    echo "スキップ: CLAUDE.md（手動でマージしてください）"
+  fi
   rm -f "$tmp_file"
 fi
 
