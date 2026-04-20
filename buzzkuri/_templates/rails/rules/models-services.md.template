@@ -1,0 +1,18 @@
+# Models / Services / Policies / Jobs 規約
+
+## Models (`app/models/*`)
+- ActiveRecord + Concerns で構成する。
+- バリデーション・スコープなど、データに関する責務を持たせる。
+- `self.table_name =` の明示的定義は不要。命名規則で自動解決すること。
+
+## Services (`app/services/*`)
+- 複数モデルにまたがる処理はService層に記述する。
+- 全て `BaseService` を継承すること。
+- 公開メソッドは原則 `#execute` のみ。
+- Testableな設計を維持すること。
+
+## Policies (`app/policies/*`)
+- 認可はPunditに集約。Controller内に認可ロジックを書かない。
+
+## Jobs (`app/jobs/*`)
+- ActiveJobとし、必ず `queue_as` を指定すること。
