@@ -1,0 +1,9 @@
+# セットアップ対象のプロジェクトリポジトリ一覧
+# このファイルをコピーして repos.local を作成し、実際のパスを記載すること
+# repos.local は gitignore 対象
+
+~/work/buzzkuri/backend
+~/work/buzzkuri/columns
+~/work/buzzkuri/infra
+~/work/buzzkuri/compliance_admin
+~/work/buzzkuri/internal_lambdas

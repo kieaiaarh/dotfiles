@@ -34,15 +34,26 @@ link "$DOTFILES_DIR/ai/claude/commands/think.md" "$CLAUDE_DIR/commands/think.md"
 echo ""
 echo "=== プロジェクトリポの .git/info/exclude 設定 ==="
 
-# AI制御ファイルをUntrackedに出さないためのローカル除外設定
-# プロジェクトリポのパスを列挙する
-PROJECT_REPOS=(
-  "$HOME/work/buzzkuri/backend"
-  "$HOME/work/buzzkuri/columns"
-  "$HOME/work/buzzkuri/infra"
-  "$HOME/work/buzzkuri/compliance_admin"
-  "$HOME/work/buzzkuri/internal_lambdas"
-)
+REPOS_FILE="$DOTFILES_DIR/repos.local"
+if [ ! -f "$REPOS_FILE" ]; then
+  echo "repos.local が見つかりません。repos.template をコピーして作成してください:"
+  echo "  cp $DOTFILES_DIR/repos.template $DOTFILES_DIR/repos.local"
+  echo "スキップします。"
+  echo ""
+  echo "=== 手動対応が必要なもの ==="
+  echo "1. ~/.claude.json: ai/claude/claude.json.template を参考にトークンを設定"
+  echo "   (claude login で再認証すれば自動生成されます)"
+  echo ""
+  echo "完了！"
+  exit 0
+fi
+
+PROJECT_REPOS=()
+while IFS= read -r line; do
+  [[ "$line" =~ ^#.*$ ]] && continue
+  [ -z "$line" ] && continue
+  PROJECT_REPOS+=("$(eval echo "$line")")
+done < "$REPOS_FILE"
 
 EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/rules/")
 

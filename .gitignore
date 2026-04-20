@@ -12,3 +12,6 @@ ai/claude/history.jsonl
 .env*
 !.env.template
 !**/.env.template
+
+# ローカル設定
+repos.local
