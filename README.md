@@ -74,23 +74,36 @@ set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8
 git clone <this-repo> ~/work/buzzkuri/dotfiles
 ```
 
-#### 2. シンボリックリンクを貼る
+#### 2. repos.local を作成する
+
+`repos.template` をコピーして、このマシンで使うリポジトリパスを記載します。
 
 ```bash
 cd ~/work/buzzkuri/dotfiles
+cp repos.template repos.local
+# repos.local を編集（クローン済みリポジトリのパスを確認・修正）
+```
+
+> `repos.local` は `.gitignore` 対象のためコミットされません。
+> まだクローンしていないリポジトリは `install.sh` が自動でスキップし、clone を促すメッセージを表示します。
+
+#### 3. install.sh を実行する
+
+```bash
 bash install.sh
 ```
 
-以下のsymlinkが作成されます：
+以下が自動で行われます：
 
-| symlink | 実体 |
+| 処理 | 内容 |
 |---|---|
-| `~/.claude/CLAUDE.md` | `ai/claude/CLAUDE.md` |
-| `~/.claude/settings.json` | `ai/claude/settings.json` |
-| `~/.claude/mystatus.sh` | `ai/claude/mystatus.sh` |
-| `~/.claude/commands/think.md` | `ai/claude/commands/think.md` |
+| symlink | `~/.claude/CLAUDE.md` → `ai/claude/CLAUDE.md` 他 |
+| symlink | `~/.vimrc` → `.vimrc` |
+| copy | `~/.vim/autoload/pathogen.vim` |
+| clone | NeoBundle → `~/.vim/bundle/neobundle.vim` |
+| 設定 | 各リポジトリの `.git/info/exclude` に AI ファイルを追加 |
 
-#### 3. Claude にログイン
+#### 4. Claude にログイン
 
 ```bash
 claude login
@@ -98,7 +111,7 @@ claude login
 
 `~/.claude.json` が自動生成されます。
 
-#### 4. MCP・個人設定を追記
+#### 5. MCP・個人設定を追記
 
 `ai/claude/claude.json.template` を参考に、`~/.claude.json` へ以下を手動で追記します：
 
@@ -121,7 +134,7 @@ claude login
 
 Sentryのアクセストークンは [Sentry の設定画面](https://sentry.io/settings/) から取得してください。
 
-#### 5. Claudeプラグインの再インストール
+#### 6. Claudeプラグインの再インストール
 
 `ai/claude/settings.json` の `enabledPlugins` に記載のプラグインは、初回起動時に自動インストールされます。
 
