@@ -1,9 +1,13 @@
 # セットアップ対象のプロジェクトリポジトリ一覧
 # このファイルをコピーして repos.local を作成し、実際のパスを記載すること
 # repos.local は gitignore 対象
+#
+# フォーマット: <パス> <テンプレート種別>
+# テンプレート種別: rails / nextjs / infra-cdk / wordpress
+# env ファイルは buzzkuri/_templates/<種別>/.env.local を自動参照する
 
-~/work/buzzkuri/backend
-~/work/buzzkuri/columns
-~/work/buzzkuri/infra
-~/work/buzzkuri/compliance_admin
-~/work/buzzkuri/internal_lambdas
+~/work/buzzkuri/backend rails
+~/work/buzzkuri/columns wordpress
+~/work/buzzkuri/infra infra-cdk
+~/work/buzzkuri/compliance_admin rails
+~/work/buzzkuri/internal_lambdas rails

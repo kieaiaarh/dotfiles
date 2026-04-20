@@ -52,18 +52,21 @@ if [ ! -f "$REPOS_FILE" ]; then
   exit 0
 fi
 
-PROJECT_REPOS=()
+declare -A REPO_TEMPLATE
 while IFS= read -r line; do
   [[ "$line" =~ ^#.*$ ]] && continue
   [ -z "$line" ] && continue
-  PROJECT_REPOS+=("$(eval echo "$line")")
+  repo_path=$(eval echo "$(echo "$line" | awk '{print $1}')")
+  template_type=$(echo "$line" | awk '{print $2}')
+  REPO_TEMPLATE["$repo_path"]="$template_type"
 done < "$REPOS_FILE"
 
 EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/rules/")
 
-for repo in "${PROJECT_REPOS[@]}"; do
+echo "--- .git/info/exclude 設定 ---"
+for repo in "${!REPO_TEMPLATE[@]}"; do
   if [ ! -d "$repo/.git" ]; then
-    echo "スキップ（.gitなし）: $repo"
+    echo "⚠️  未クローン（スキップ）: $repo"
     continue
   fi
 
@@ -81,6 +84,35 @@ for repo in "${PROJECT_REPOS[@]}"; do
   else
     echo "変更なし: $repo"
   fi
+done
+
+echo ""
+echo "=== .claude/rules/ の同期 ==="
+for repo in "${!REPO_TEMPLATE[@]}"; do
+  template="${REPO_TEMPLATE[$repo]}"
+
+  if [ ! -d "$repo/.git" ]; then
+    echo "⚠️  未クローン（スキップ）: $repo  [テンプレート: $template]"
+    echo "    → clone 後に: bash $DOTFILES_DIR/scripts/sync-rules-to-project.sh $template $repo"
+    continue
+  fi
+
+  if [ -z "$template" ]; then
+    echo "⚠️  テンプレート種別が未設定（スキップ）: $repo"
+    echo "    → repos.local に '<パス> <テンプレート種別>' の形式で記載してください"
+    continue
+  fi
+
+  env_file="$DOTFILES_DIR/buzzkuri/_templates/$template/.env.local"
+  if [ ! -f "$env_file" ]; then
+    echo "⚠️  env ファイルなし（スキップ）: $repo  [テンプレート: $template]"
+    echo "    → cp $DOTFILES_DIR/buzzkuri/_templates/$template/.env.template $env_file"
+    echo "    → 編集後に: bash $DOTFILES_DIR/scripts/sync-rules-to-project.sh $template $repo $env_file"
+    continue
+  fi
+
+  echo "同期中: $repo  [テンプレート: $template]"
+  bash "$DOTFILES_DIR/scripts/sync-rules-to-project.sh" "$template" "$repo" "$env_file"
 done
 
 echo ""
