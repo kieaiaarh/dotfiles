@@ -30,18 +30,14 @@ git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
 ls ~/.vim/bundle/neobundle.vim/autoload/neobundle.vim
 ```
 
-ファイルが存在すれば OK。次に vim を起動すると未インストールプラグインの確認メッセージが出るので `y` を押してインストール完了。
+ファイルが存在すれば OK。vim を起動してプラグインをインストール：
 
 ```
 vim
-# 「N plugins not installed. Install now? (y/n):」と表示されたら y
-```
-
-手動で実行したい場合:
-
-```
 :NeoBundleInstall
 ```
+
+インストール完了後、vim を再起動して動作確認する。
 
 ### Windows
 
