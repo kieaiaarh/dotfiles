@@ -26,6 +26,19 @@ paths:
 - 省略語禁止
 - コメント・ログ・テストの describe/it はすべて日本語統一
 
+## React Compiler（メモ化の自動化）
+
+**作業開始前に `next.config.*` を確認し、`reactCompiler: true` が設定されているかチェックすること。**
+
+### React Compiler が有効な場合
+- `useCallback` / `useMemo` / `React.memo` を**新たに書かない**。コンパイラが自動でメモ化最適化する
+- 既存コードのこれらの記述はそのまま残す（削除はスコープ外）
+- パフォーマンス改善目的で手動メモ化を追加することも禁止
+
+### React Compiler が無効な場合（従来通り）
+- 参照同一性が必要な箇所（子コンポーネントへの関数 props、`useEffect` の依存など）に `useCallback` / `useMemo` を使う
+- 不要なメモ化（プリミティブ値、頻繁に変わる値）は書かない
+
 ## Guardrails
 
 - `console.log` をコミットに含めない
