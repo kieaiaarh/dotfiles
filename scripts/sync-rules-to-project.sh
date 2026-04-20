@@ -120,8 +120,9 @@ else
   cp "$CLAUDE_TEMPLATE" "$tmp_file"
   apply_env "$tmp_file"
   echo "CLAUDE.md は既存のため自動更新しません。差分を参考に手動でマージしてください:"
+  echo "  (- がテンプレート側、+ が既存ファイル側)"
   echo ""
-  diff "$tmp_file" "$PROJECT_CLAUDE" || true
+  diff -u "$tmp_file" "$PROJECT_CLAUDE" || true
   rm -f "$tmp_file"
 fi
 
