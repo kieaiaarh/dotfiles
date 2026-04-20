@@ -25,6 +25,10 @@ link() {
   echo "リンク作成: $dst -> $src"
 }
 
+echo "=== tmux 設定のシンボリックリンク ==="
+link "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
+
+echo ""
 echo "=== Claude グローバル設定のシンボリックリンク ==="
 link "$DOTFILES_DIR/ai/claude/CLAUDE.md"        "$CLAUDE_DIR/CLAUDE.md"
 link "$DOTFILES_DIR/ai/claude/settings.json"    "$CLAUDE_DIR/settings.json"

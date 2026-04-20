@@ -10,6 +10,8 @@ my dotfiles
 `install.sh` が以下を自動で行います：
 
 - `.vimrc` → `~/.vimrc` のシンボリックリンク作成
+- `.tmux.conf` → `~/.tmux.conf` のシンボリックリンク作成
+- `.vimrc` → `~/.vimrc` のシンボリックリンク作成
 - `pathogen.vim` を `~/.vim/autoload/` にコピー
 - NeoBundle を `~/.vim/bundle/neobundle.vim` に clone
 
@@ -17,14 +19,20 @@ my dotfiles
 bash ~/work/buzzkuri/dotfiles/install.sh
 ```
 
-その後、プラグインをインストール：
+その後、以下を手動で実行：
+
+```bash
+# tmux クリップボード連携に必要
+brew install reattach-to-user-namespace
+```
 
 ```
+# vim プラグインのインストール
 vim
 :NeoBundleInstall
 ```
 
-完了後 vim を再起動して動作確認する。
+tmux を再起動（または `tmux source ~/.tmux.conf`）して動作確認する。
 
 > **注意**: `vimfiles/ → ~/.vim/` のシンボリックリンクは貼らないこと。
 > `bundle/` がdotfilesリポに混入する原因になります。install.sh が正しく処理します。
