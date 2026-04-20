@@ -1,1 +1,12 @@
 /vimfiles/bundle/*
+
+# Claude キャッシュ・セッション（再生成可能）
+ai/claude/plugins/
+ai/claude/sessions/
+ai/claude/cache/
+ai/claude/history.jsonl
+
+# 秘密情報
+*.json.secret
+.env*
+!.env.*.template

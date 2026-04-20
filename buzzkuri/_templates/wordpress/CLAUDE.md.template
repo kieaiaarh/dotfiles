@@ -1,0 +1,47 @@
+# AGENTS ガイド（{{PROJECT_NAME}} / WordPress）
+
+WordPress サイトを Docker で管理するリポジトリ。
+WordPress 実体は `./{{WORDPRESS_DIR}}/`、MySQL {{MYSQL_VERSION}} を DB コンテナとして使用。
+環境は local / preview / staging / production の 4 種。操作は **すべて Makefile 経由**。
+
+---
+
+## 絶対原則
+
+1. **RESET前提** — 問題が出たら `make reset` からやり直す
+2. **MODEをまたいだ restart は禁止** — http ⇔ https の切替は必ず reset から
+3. **WordPress の canonical / redirect 挙動は正** — 抑制・回避しない
+4. **DB はコンテナ運用** — RDS / マネージドDBへの変更は指示なしに提案しない
+5. **`make` コマンドで操作する** — `docker compose` を直打ちしない
+
+---
+
+## 環境構成
+
+| ENV | MODE | URL |
+|-----|------|-----|
+| local | http | `http://localhost:{{LOCAL_PORT}}/{{WP_PATH}}/` |
+| local | https | `https://{{LOCAL_DOMAIN}}/{{WP_PATH}}/` |
+| preview | - | `https://{{PREVIEW_DOMAIN}}/{{WP_PATH}}/` |
+| staging | - | `https://{{STAGING_DOMAIN}}/{{WP_PATH}}/` |
+| production | - | `https://{{PRODUCTION_DOMAIN}}/{{WP_PATH}}/` |
+
+---
+
+## Git 操作の原則
+
+- `git add .` / `git add -A` **禁止** — ファイル名を明示して `git add`
+- ステージング前に `git status` で必ず確認
+- main ブランチへ直接 push しない。feature ブランチ → PR を経由する
+
+---
+
+## 回答・出力言語
+
+**日本語で回答すること。** コメント・コミットメッセージも日本語を基本とする。
+
+---
+
+## 参照ドキュメント
+
+操作手順の正は `README.md` に記載されている。迷ったら参照する。

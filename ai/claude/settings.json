@@ -1,0 +1,50 @@
+{
+  "permissions": {
+    "defaultMode": "acceptEdits"
+  },
+  "model": "sonnet",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/mystatus.sh",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "planning-with-files@planning-with-files": true,
+    "understand-anything@understand-anything": true,
+    "static-analysis@trailofbits": true,
+    "differential-review@trailofbits": true,
+    "sharp-edges@trailofbits": true,
+    "playwright-skill@playwright-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "planning-with-files": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/OthmanAdi/planning-with-files.git"
+      }
+    },
+    "understand-anything": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/Lum1104/Understand-Anything.git"
+      }
+    },
+    "trailofbits": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/trailofbits/skills.git"
+      }
+    },
+    "playwright-skill": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/lackeyjb/playwright-skill.git"
+      }
+    }
+  },
+  "sandbox": {
+    "enabled": true
+  }
+}
