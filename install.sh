@@ -52,19 +52,22 @@ if [ ! -f "$REPOS_FILE" ]; then
   exit 0
 fi
 
-declare -A REPO_TEMPLATE
+REPO_PATHS=()
+REPO_TEMPLATES=()
 while IFS= read -r line; do
   [[ "$line" =~ ^#.*$ ]] && continue
   [ -z "$line" ] && continue
   repo_path=$(eval echo "$(echo "$line" | awk '{print $1}')")
   template_type=$(echo "$line" | awk '{print $2}')
-  REPO_TEMPLATE["$repo_path"]="$template_type"
+  REPO_PATHS+=("$repo_path")
+  REPO_TEMPLATES+=("$template_type")
 done < "$REPOS_FILE"
 
 EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/rules/")
 
 echo "--- .git/info/exclude 設定 ---"
-for repo in "${!REPO_TEMPLATE[@]}"; do
+for i in "${!REPO_PATHS[@]}"; do
+  repo="${REPO_PATHS[$i]}"
   if [ ! -d "$repo/.git" ]; then
     echo "⚠️  未クローン（スキップ）: $repo"
     continue
@@ -88,8 +91,9 @@ done
 
 echo ""
 echo "=== .claude/rules/ の同期 ==="
-for repo in "${!REPO_TEMPLATE[@]}"; do
-  template="${REPO_TEMPLATE[$repo]}"
+for i in "${!REPO_PATHS[@]}"; do
+  repo="${REPO_PATHS[$i]}"
+  template="${REPO_TEMPLATES[$i]}"
 
   if [ ! -d "$repo/.git" ]; then
     echo "⚠️  未クローン（スキップ）: $repo  [テンプレート: $template]"
