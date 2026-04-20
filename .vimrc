@@ -56,10 +56,6 @@ set wrapscan "検索時に最後まで行ったら最初に戻る
 set clipboard+=unnamed
 " マウスドラッグ選択を自動でシステムクリップボードにコピー
 vnoremap <LeftRelease> "*ygv
-" +clipboard がない環境（macOS システム vim 等）でも閉じた後に貼り付けられるようにする
-if executable('pbcopy')
-  autocmd VimLeave * call system('pbcopy', getreg('"'))
-endif
 "######コメントをグレーにする
 hi Comment ctermfg=gray
 "######カーソル位置
