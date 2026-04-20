@@ -1,0 +1,84 @@
+# AGENTS ガイド（{{PROJECT_NAME}}）
+
+このドキュメントは、エージェント/開発者が安全かつ一貫性を持って作業するための運用・実装規約です。
+**優先度**: 直接の指示 > 本ドキュメント > 既存コードの慣習
+
+## 対象と範囲
+- 対象: Next.js アプリケーション（フロントエンド）
+- 影響範囲: リポジトリ全体（本ファイル配下）
+
+## Profiles（運用モード）
+- **readonly**: 設計・調査のみ。コード変更なし。
+- **unattended**: 短時間の全自動（検証環境のみ）。開始前に必ずブランチ作成。
+
+---
+
+## 技術スタック（要点）
+- Node.js `{{NODE_VERSION}}` / Next.js `{{NEXTJS_VERSION}}`
+- 言語: TypeScript（strict mode）
+- スタイリング: {{STYLING_TOOL}}（例: Tailwind CSS / CSS Modules）
+- 状態管理: {{STATE_TOOL}}（例: Zustand / Jotai / React Query）
+- API通信: {{API_CLIENT}}（例: fetch / axios / SWR）
+- テスト: {{TEST_TOOL}}（例: Vitest / Jest + Testing Library）
+- Lint: ESLint + Prettier
+
+---
+
+## 最重要実行ルール
+- コマンド実行は必ず最初に README と Makefile（または package.json scripts）を確認すること
+- `npm` / `yarn` / `pnpm` の直接実行は、Makefile に代替ターゲットがない場合のみ許可
+- sandbox 制約で失敗した場合は迂回せず、実行しようとしたコマンドとユーザーへの依頼事項を分けて報告すること
+
+---
+
+## ディレクトリ責務
+- `app/` または `pages/`: ルーティング。ロジックは持ち込まない
+- `components/`: 再利用可能なUIコンポーネント
+- `features/` または `modules/`: 機能単位のまとまり（コンポーネント + hooks + 型）
+- `hooks/`: カスタムフック
+- `lib/` または `utils/`: 汎用ユーティリティ
+- `types/`: 型定義
+
+---
+
+## コーディング規約
+- TypeScript strict mode 必須
+- `any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
+- コンポーネントは関数コンポーネントのみ（クラスコンポーネント禁止）
+- Props は interface で定義
+- ディレクトリ、ファイル名にて省略語は禁止
+- コメント・ログ・テストの describe/it はすべて日本語統一
+
+### Guardrails
+- 外部通信は unattended禁止
+- 環境変数: `NEXT_PUBLIC_*` は公開情報のみ。秘密情報は サーバーサイドのみで参照
+- `console.log` をコミットに含めない
+
+---
+
+## ワークフロー（最小）
+- 1ブランチ=1機能
+- 実装 → 型チェック（`tsc --noEmit`）→ lint → テスト
+- .gitmessage に従ってコミットすること（日本語統一・絵文字を適切に使うこと）
+
+## PR規約
+- タイトル: 対象機能を明記（例）[Feature] ユーザー一覧画面の実装
+- 本文:
+  * 変更概要 / スコープ外
+  * 動作確認（スクショ必須）
+  * 新規/編集テスト一覧と結果
+  * チェックリスト
+     - `tsc --noEmit` が通ること
+     - ESLint エラーなし
+     - 省略語なし命名
+
+---
+
+# 便利コマンド
+- 開発サーバー: `make dev` または `npm run dev`
+- 型チェック: `npx tsc --noEmit`
+- Lint: `npm run lint`
+- テスト: `npm run test`
+- ビルド: `npm run build`
+
+このガイドにない判断は、既存コードの慣習と CI 設定（.github/workflows）を最優先に合わせること。
