@@ -105,8 +105,18 @@ PROJECT_NAMESPACE=compliance/api
 
 **2. syncスクリプトを実行する**
 
+dotfilesのルートから実行する場合：
+
 ```bash
+# どちらでも動く
 bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
+./scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
+```
+
+別ディレクトリから実行する場合はフルパスで：
+
+```bash
+~/work/buzzkuri/dotfiles/scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend ~/work/buzzkuri/dotfiles/buzzkuri/_templates/rails/.env.local
 ```
 
 スクリプトが行うこと：
