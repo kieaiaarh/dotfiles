@@ -1,0 +1,37 @@
+{
+  "autoUpdates": false,
+  "deepLinkTerminal": "iTerm",
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "aws-docs": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"]
+    },
+    "aws-cdk": {
+      "command": "uvx",
+      "args": ["awslabs.cdk-mcp-server@latest"]
+    },
+    "sentry": {
+      "command": "npx",
+      "args": [
+        "@sentry/mcp-server@latest",
+        "--access-token={{SENTRY_ACCESS_TOKEN}}",
+        "--organization-slug={{SENTRY_ORG_SLUG}}"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"]
+    }
+  },
+  "oauthAccount": {
+    "emailAddress": "{{OAUTH_EMAIL}}"
+  }
+}
