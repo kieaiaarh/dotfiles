@@ -1,6 +1,58 @@
 # dotfiles
 my dotfiles
 
+---
+
+## Vim セットアップ（新しいマシン）
+
+### macOS / Linux
+
+#### 1. シンボリックリンクを貼る
+
+```bash
+ln -s ~/work/buzzkuri/dotfiles/.vimrc ~/.vimrc
+ln -s ~/work/buzzkuri/dotfiles/vimfiles ~/.vim
+```
+
+#### 2. NeoBundle をインストール
+
+```bash
+git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+```
+
+#### 3. プラグインをインストール
+
+```
+vim
+:NeoBundleInstall
+```
+
+### Windows
+
+#### 1. シンボリックリンクを貼る（PowerShell / 管理者権限）
+
+```powershell
+New-Item -ItemType SymbolicLink -Path "$HOME\_vimrc" -Target "$HOME\work\buzzkuri\dotfiles\_vimrc"
+```
+
+#### 2. vim-plug をインストール
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
+  ni "$HOME/vimfiles/autoload/plug.vim" -Force
+```
+
+#### 3. プラグインをインストール
+
+```
+vim
+:PlugInstall
+```
+
+---
+
+## Perl 開発時の追加設定
+
 if you use Perl for developing, add charset as follow
 
 ```
