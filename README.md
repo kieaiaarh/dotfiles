@@ -17,13 +17,29 @@ ln -s ~/work/buzzkuri/dotfiles/vimfiles ~/.vim
 #### 2. NeoBundle をインストール
 
 ```bash
-git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+mkdir -p ~/.vim/bundle
+git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
 ```
 
-#### 3. プラグインをインストール
+> `~/.vim` をシンボリックリンクにした場合、clone 先は `~/work/buzzkuri/dotfiles/vimfiles/bundle/neobundle.vim` になります（vimfiles/bundle/ は `.gitignore` 対象なので問題なし）。
+
+#### 3. インストールを確認してから vim を起動
+
+```bash
+# clone が正しくできているか確認
+ls ~/.vim/bundle/neobundle.vim/autoload/neobundle.vim
+```
+
+ファイルが存在すれば OK。次に vim を起動すると未インストールプラグインの確認メッセージが出るので `y` を押してインストール完了。
 
 ```
 vim
+# 「N plugins not installed. Install now? (y/n):」と表示されたら y
+```
+
+手動で実行したい場合:
+
+```
 :NeoBundleInstall
 ```
 
