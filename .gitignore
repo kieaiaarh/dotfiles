@@ -1,3 +1,4 @@
+.DS_Store
 /vimfiles/bundle/*
 
 # Claude キャッシュ・セッション（再生成可能）
