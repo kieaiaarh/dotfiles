@@ -121,6 +121,8 @@ bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_te
 
 スクリプトが行うこと：
 - `.claude/rules/*.md` を自動生成（プレースホルダーを置換済み）
+- `.claude/settings.json` を生成（`claude-settings.json.template` から）
+- `.claude/hooks/*.sh` を生成（実行権限付き）
 - `CLAUDE.md` が存在しない場合はテンプレートからコピー＆置換
 - `CLAUDE.md` が既存の場合はdiffを表示して手動マージを案内
 
@@ -129,8 +131,8 @@ bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_te
 ```bash
 cd /path/to/project
 git diff
-git add .claude/rules/ CLAUDE.md
-git commit -m "📝: Claude rulesファイルを追加"
+git add .claude/rules/ .claude/settings.json .claude/hooks/ CLAUDE.md
+git commit -m "📝: Claude 制御ファイルを追加"
 ```
 
 | テンプレート | 用途 |

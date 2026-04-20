@@ -1,0 +1,33 @@
+---
+description: TypeScript コーディング規約（.ts / .tsx ファイルに適用）
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+---
+
+# TypeScript コーディング規約
+
+## 型安全
+
+- strict mode 必須。`any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
+- Props は `interface` で定義。外部公開する型は `export` する
+- `as` キャストは型ガード関数で代替できる場合は禁止
+
+## コンポーネント
+
+- 関数コンポーネントのみ（クラスコンポーネント禁止）
+- コンポーネントファイルは1ファイル1コンポーネントを原則とする
+- ロジックはカスタムフック（`hooks/`）に分離し、コンポーネントはUIに専念する
+
+## 命名
+
+- コンポーネント: PascalCase
+- フック: `use` プレフィックス（例: `useUserProfile`）
+- 省略語禁止
+- コメント・ログ・テストの describe/it はすべて日本語統一
+
+## Guardrails
+
+- `console.log` をコミットに含めない
+- `NEXT_PUBLIC_*` は公開情報のみ。秘密情報はサーバーサイドのみで参照
+- `useEffect` の依存配列は明示する。`eslint-disable` で黙らせない

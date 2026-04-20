@@ -1,14 +1,11 @@
 #!/bin/bash
-# テンプレートの .claude/rules/ をプロジェクトリポに同期するスクリプト
+# テンプレートの .claude/ 配下をプロジェクトリポに同期するスクリプト
 #
 # 使い方:
 #   bash scripts/sync-rules-to-project.sh <テンプレート種別> <プロジェクトパス> [envファイル]
 #
 # 例:
-#   # envファイルなし（プレースホルダーそのままコピー）
 #   bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend
-#
-#   # envファイルあり（プレースホルダーを自動置換）
 #   bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
 
 set -e
@@ -29,13 +26,13 @@ fi
 TEMPLATE_DIR="$DOTFILES_DIR/buzzkuri/_templates/$TEMPLATE_TYPE"
 RULES_TEMPLATE_DIR="$TEMPLATE_DIR/rules"
 PROJECT_RULES_DIR="$PROJECT_PATH/.claude/rules"
+PROJECT_CLAUDE_DIR="$PROJECT_PATH/.claude"
 
 if [ ! -d "$TEMPLATE_DIR" ]; then
   echo "エラー: テンプレート '$TEMPLATE_TYPE' が見つかりません"
   exit 1
 fi
 
-# envファイルの存在チェック
 if [ -n "$ENV_FILE" ] && [ ! -f "$ENV_FILE" ]; then
   echo "エラー: envファイルが見つかりません: $ENV_FILE"
   exit 1
@@ -54,16 +51,19 @@ apply_env() {
 }
 
 [ -n "$ENV_FILE" ] && echo "envファイルを読み込みます: $ENV_FILE"
-echo "=== .claude/rules/ の同期: $TEMPLATE_TYPE → $PROJECT_PATH ==="
+echo "=== .claude/ の同期: $TEMPLATE_TYPE → $PROJECT_PATH ==="
 echo ""
 
 mkdir -p "$PROJECT_RULES_DIR"
 UPDATED=0
 
+# ── 1. rules/*.md.template ──────────────────────────────────────────────────
 if [ ! -d "$RULES_TEMPLATE_DIR" ]; then
-  echo "テンプレートにrulesディレクトリがありません（スキップ）"
+  echo "[rules] テンプレートに rules/ ディレクトリがありません（スキップ）"
 else
+  echo "--- .claude/rules/ ---"
   for template_file in "$RULES_TEMPLATE_DIR"/*.md.template; do
+    [ -e "$template_file" ] || continue
     filename=$(basename "$template_file" .template)
     project_file="$PROJECT_RULES_DIR/$filename"
 
@@ -97,8 +97,9 @@ else
   done
 fi
 
+# ── 2. CLAUDE.md.template ───────────────────────────────────────────────────
 echo ""
-echo "=== CLAUDE.md の確認 ==="
+echo "--- CLAUDE.md ---"
 CLAUDE_TEMPLATE="$TEMPLATE_DIR/CLAUDE.md.template"
 PROJECT_CLAUDE="$PROJECT_PATH/CLAUDE.md"
 
@@ -110,7 +111,6 @@ elif [ ! -f "$PROJECT_CLAUDE" ]; then
   echo "作成しました: CLAUDE.md"
   remaining=$(grep -o '{{[^}]*}}' "$PROJECT_CLAUDE" 2>/dev/null | sort -u || true)
   if [ -n "$remaining" ]; then
-    echo ""
     echo "未置換のプレースホルダーが残っています。手動で置き換えてください:"
     echo "$remaining" | while read -r p; do echo "  $p"; done
   fi
@@ -119,11 +119,86 @@ else
   tmp_file=$(mktemp)
   cp "$CLAUDE_TEMPLATE" "$tmp_file"
   apply_env "$tmp_file"
-  echo "CLAUDE.md はプレースホルダーが含まれるため自動更新しません。"
-  echo "以下のdiffを参考に手動でマージしてください:"
+  echo "CLAUDE.md は既存のため自動更新しません。差分を参考に手動でマージしてください:"
   echo ""
   diff "$tmp_file" "$PROJECT_CLAUDE" || true
   rm -f "$tmp_file"
+fi
+
+# ── 3. claude-settings.json.template → .claude/settings.json ───────────────
+echo ""
+echo "--- .claude/settings.json ---"
+SETTINGS_TEMPLATE="$TEMPLATE_DIR/claude-settings.json.template"
+PROJECT_SETTINGS="$PROJECT_CLAUDE_DIR/settings.json"
+
+if [ ! -f "$SETTINGS_TEMPLATE" ]; then
+  echo "テンプレートに claude-settings.json.template がありません（スキップ）"
+elif [ ! -f "$PROJECT_SETTINGS" ]; then
+  cp "$SETTINGS_TEMPLATE" "$PROJECT_SETTINGS"
+  apply_env "$PROJECT_SETTINGS"
+  echo "作成しました: .claude/settings.json"
+  UPDATED=$((UPDATED + 1))
+else
+  tmp_file=$(mktemp)
+  cp "$SETTINGS_TEMPLATE" "$tmp_file"
+  apply_env "$tmp_file"
+  if ! diff -q "$tmp_file" "$PROJECT_SETTINGS" > /dev/null 2>&1; then
+    echo "差分あり: .claude/settings.json"
+    diff "$tmp_file" "$PROJECT_SETTINGS" || true
+    echo ""
+    printf "上書きしますか？ [y/N]: "
+    read -r answer
+    if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+      cp "$tmp_file" "$PROJECT_SETTINGS"
+      echo "更新しました: .claude/settings.json"
+      UPDATED=$((UPDATED + 1))
+    else
+      echo "スキップ: .claude/settings.json"
+    fi
+  else
+    echo "変更なし: .claude/settings.json"
+  fi
+  rm -f "$tmp_file"
+fi
+
+# ── 4. hooks/ ───────────────────────────────────────────────────────────────
+HOOKS_TEMPLATE_DIR="$TEMPLATE_DIR/hooks"
+PROJECT_HOOKS_DIR="$PROJECT_CLAUDE_DIR/hooks"
+
+if [ -d "$HOOKS_TEMPLATE_DIR" ]; then
+  echo ""
+  echo "--- .claude/hooks/ ---"
+  mkdir -p "$PROJECT_HOOKS_DIR"
+  for hook_file in "$HOOKS_TEMPLATE_DIR"/*.sh; do
+    [ -e "$hook_file" ] || continue
+    filename=$(basename "$hook_file")
+    project_hook="$PROJECT_HOOKS_DIR/$filename"
+
+    if [ ! -f "$project_hook" ]; then
+      cp "$hook_file" "$project_hook"
+      chmod +x "$project_hook"
+      echo "新規追加: .claude/hooks/$filename"
+      UPDATED=$((UPDATED + 1))
+    else
+      if ! diff -q "$hook_file" "$project_hook" > /dev/null 2>&1; then
+        echo "差分あり: .claude/hooks/$filename"
+        diff "$hook_file" "$project_hook" || true
+        echo ""
+        printf "上書きしますか？ [y/N]: "
+        read -r answer
+        if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+          cp "$hook_file" "$project_hook"
+          chmod +x "$project_hook"
+          echo "更新しました: .claude/hooks/$filename"
+          UPDATED=$((UPDATED + 1))
+        else
+          echo "スキップ: .claude/hooks/$filename"
+        fi
+      else
+        echo "変更なし: .claude/hooks/$filename"
+      fi
+    fi
+  done
 fi
 
 echo ""

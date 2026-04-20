@@ -1,0 +1,34 @@
+---
+description: WordPress / PHP コーディング規約（PHP・テーマファイルに適用）
+paths:
+  - "**/*.php"
+  - "{{WORDPRESS_DIR}}/**"
+---
+
+# WordPress コーディング規約
+
+## PHP 規約
+
+- PHP 8.x 記法を活用する（named arguments, match式, nullsafe演算子 等）
+- `global` 変数の使用禁止。依存は引数で渡す
+- 直接 SQL クエリ禁止。`$wpdb->prepare()` を必ず使う
+- `echo` / `print` の直接出力禁止。エスケープ関数（`esc_html`, `esc_attr`, `wp_kses_post` 等）を経由する
+
+## テーマ・プラグイン構造
+
+- テーマは `{{WORDPRESS_DIR}}/wp-content/themes/` に配置
+- カスタム機能はプラグイン化する。`functions.php` に大量のコードを書かない
+- テンプレートパーツは `get_template_part()` で分割する
+
+## セキュリティ
+
+- nonce を用いてフォーム送信・AJAX リクエストを検証する（`wp_nonce_field` / `check_admin_referer`）
+- ユーザー入力は必ずサニタイズ・バリデーションする
+- ファイルアップロードは WordPress のメディア機能を使う
+
+## 命名
+
+- 関数・変数は snake_case
+- クラスは PascalCase
+- プレフィックスを統一して名前空間の衝突を避ける（例: `{{PROJECT_PREFIX}}_`）
+- コメント・ログはすべて日本語統一

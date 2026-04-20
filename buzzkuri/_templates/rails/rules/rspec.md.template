@@ -1,3 +1,9 @@
+---
+description: RSpec テスト規約（spec/ 配下に適用）
+paths:
+  - "spec/**"
+---
+
 # RSpec テスト規約
 
 ## 構造

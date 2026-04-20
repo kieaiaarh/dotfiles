@@ -82,3 +82,8 @@
 - ビルド: `npm run build`
 
 このガイドにない判断は、既存コードの慣習と CI 設定（.github/workflows）を最優先に合わせること。
+
+@.claude/rules/typescript.md
+@.claude/rules/testing.md
+@.claude/rules/components.md
+@.claude/rules/workflow.md

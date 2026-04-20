@@ -1,3 +1,12 @@
+---
+description: Models / Services / Policies / Jobs 規約（app/models, app/services, app/policies, app/jobs 配下に適用）
+paths:
+  - "app/models/**"
+  - "app/services/**"
+  - "app/policies/**"
+  - "app/jobs/**"
+---
+
 # Models / Services / Policies / Jobs 規約
 
 ## Models (`app/models/*`)
