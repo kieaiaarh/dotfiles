@@ -78,13 +78,24 @@ echo "=== CLAUDE.md の確認 ==="
 CLAUDE_TEMPLATE="$TEMPLATE_DIR/CLAUDE.md.template"
 PROJECT_CLAUDE="$PROJECT_PATH/CLAUDE.md"
 
-if [ -f "$CLAUDE_TEMPLATE" ] && [ -f "$PROJECT_CLAUDE" ]; then
+if [ ! -f "$CLAUDE_TEMPLATE" ]; then
+  echo "テンプレートに CLAUDE.md.template がありません（スキップ）"
+elif [ ! -f "$PROJECT_CLAUDE" ]; then
+  echo "CLAUDE.md がプロジェクトに存在しません。テンプレートをコピーします。"
+  cp "$CLAUDE_TEMPLATE" "$PROJECT_CLAUDE"
+  echo ""
+  echo "作成しました: CLAUDE.md"
+  echo ""
+  echo "以下のプレースホルダーをプロジェクトに合わせて置き換えてください:"
+  grep -o '{{[^}]*}}' "$PROJECT_CLAUDE" | sort -u | while read -r placeholder; do
+    echo "  $placeholder"
+  done
+  UPDATED=$((UPDATED + 1))
+else
   echo "CLAUDE.md はプレースホルダーが含まれるため自動更新しません。"
   echo "以下のdiffを参考に手動でマージしてください:"
   echo ""
   diff "$CLAUDE_TEMPLATE" "$PROJECT_CLAUDE" || true
-else
-  echo "CLAUDE.md が見つかりません（スキップ）"
 fi
 
 echo ""
