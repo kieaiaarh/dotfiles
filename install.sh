@@ -107,13 +107,20 @@ for i in "${!REPO_PATHS[@]}"; do
     continue
   fi
 
+  env_template="$DOTFILES_DIR/buzzkuri/_templates/$template/.env.template"
   env_file="$DOTFILES_DIR/buzzkuri/_templates/$template/.env.local"
-  if [ ! -f "$env_file" ]; then
-    echo "同期中: $repo  [テンプレート: $template]（env なし）"
-    bash "$DOTFILES_DIR/scripts/sync-rules-to-project.sh" "$template" "$repo"
-  else
-    echo "同期中: $repo  [テンプレート: $template]"
+  if [ -f "$env_template" ] && [ ! -f "$env_file" ]; then
+    echo "⚠️  env ファイルなし（スキップ）: $repo  [テンプレート: $template]"
+    echo "    → cp $env_template $env_file"
+    echo "    → 編集後に: bash $DOTFILES_DIR/scripts/sync-rules-to-project.sh $template $repo $env_file"
+    continue
+  fi
+
+  echo "同期中: $repo  [テンプレート: $template]"
+  if [ -f "$env_file" ]; then
     bash "$DOTFILES_DIR/scripts/sync-rules-to-project.sh" "$template" "$repo" "$env_file"
+  else
+    bash "$DOTFILES_DIR/scripts/sync-rules-to-project.sh" "$template" "$repo"
   fi
 done
 
