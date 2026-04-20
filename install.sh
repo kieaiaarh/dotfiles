@@ -1,5 +1,5 @@
 #!/bin/bash
-# AI制御ファイルのシンボリックリンクを貼るセットアップスクリプト
+# dotfiles セットアップスクリプト（Claude Code + Vim）
 set -e
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -80,8 +80,32 @@ for repo in "${PROJECT_REPOS[@]}"; do
 done
 
 echo ""
+echo "=== Vim セットアップ ==="
+
+link "$DOTFILES_DIR/.vimrc" "$HOME/.vimrc"
+
+# ~/.vim は実ディレクトリとして管理（vimfiles/ へのシンボリックリンクは不可）
+mkdir -p "$HOME/.vim/autoload"
+if [ ! -f "$HOME/.vim/autoload/pathogen.vim" ]; then
+  cp "$DOTFILES_DIR/vimfiles/autoload/pathogen.vim" "$HOME/.vim/autoload/pathogen.vim"
+  echo "コピー: ~/.vim/autoload/pathogen.vim"
+else
+  echo "変更なし: ~/.vim/autoload/pathogen.vim"
+fi
+
+mkdir -p "$HOME/.vim/bundle"
+if [ ! -d "$HOME/.vim/bundle/neobundle.vim" ]; then
+  echo "NeoBundle をインストール中..."
+  git clone https://github.com/Shougo/neobundle.vim "$HOME/.vim/bundle/neobundle.vim"
+  echo "NeoBundle インストール完了"
+else
+  echo "変更なし: NeoBundle はインストール済み"
+fi
+
+echo ""
 echo "=== 手動対応が必要なもの ==="
 echo "1. ~/.claude.json: ai/claude/claude.json.template を参考にトークンを設定"
 echo "   (claude login で再認証すれば自動生成されます)"
+echo "2. Vim プラグイン: vim を起動して :NeoBundleInstall を実行"
 echo ""
 echo "完了！"

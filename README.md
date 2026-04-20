@@ -7,37 +7,27 @@ my dotfiles
 
 ### macOS / Linux
 
-#### 1. シンボリックリンクを貼る
+`install.sh` が以下を自動で行います：
+
+- `.vimrc` → `~/.vimrc` のシンボリックリンク作成
+- `pathogen.vim` を `~/.vim/autoload/` にコピー
+- NeoBundle を `~/.vim/bundle/neobundle.vim` に clone
 
 ```bash
-ln -s ~/work/buzzkuri/dotfiles/.vimrc ~/.vimrc
-ln -s ~/work/buzzkuri/dotfiles/vimfiles ~/.vim
+bash ~/work/buzzkuri/dotfiles/install.sh
 ```
 
-#### 2. NeoBundle をインストール
-
-```bash
-mkdir -p ~/.vim/bundle
-git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
-```
-
-> `~/.vim` をシンボリックリンクにした場合、clone 先は `~/work/buzzkuri/dotfiles/vimfiles/bundle/neobundle.vim` になります（vimfiles/bundle/ は `.gitignore` 対象なので問題なし）。
-
-#### 3. インストールを確認してから vim を起動
-
-```bash
-# clone が正しくできているか確認
-ls ~/.vim/bundle/neobundle.vim/autoload/neobundle.vim
-```
-
-ファイルが存在すれば OK。vim を起動してプラグインをインストール：
+その後、プラグインをインストール：
 
 ```
 vim
 :NeoBundleInstall
 ```
 
-インストール完了後、vim を再起動して動作確認する。
+完了後 vim を再起動して動作確認する。
+
+> **注意**: `vimfiles/ → ~/.vim/` のシンボリックリンクは貼らないこと。
+> `bundle/` がdotfilesリポに混入する原因になります。install.sh が正しく処理します。
 
 ### Windows
 
