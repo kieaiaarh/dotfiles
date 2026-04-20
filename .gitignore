@@ -10,4 +10,5 @@ ai/claude/history.jsonl
 # 秘密情報
 *.json.secret
 .env*
-!.env.*.template
+!.env.template
+!**/.env.template
