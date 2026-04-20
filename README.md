@@ -22,7 +22,8 @@ bash ~/work/buzzkuri/dotfiles/install.sh
 その後、以下を手動で実行：
 
 ```bash
-# tmux クリップボード連携に必要
+# tmux 内で vim のヤンクをシステムクリップボードに連携するために必要
+# インストールするだけでよい。設定は install.sh が作成した ~/.tmux.conf に記載済み
 brew install reattach-to-user-namespace
 ```
 
