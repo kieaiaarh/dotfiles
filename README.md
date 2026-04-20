@@ -1,6 +1,58 @@
 # dotfiles
 my dotfiles
 
+---
+
+## Vim セットアップ（新しいマシン）
+
+### macOS / Linux
+
+#### 1. シンボリックリンクを貼る
+
+```bash
+ln -s ~/work/buzzkuri/dotfiles/.vimrc ~/.vimrc
+ln -s ~/work/buzzkuri/dotfiles/vimfiles ~/.vim
+```
+
+#### 2. NeoBundle をインストール
+
+```bash
+git clone git://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+```
+
+#### 3. プラグインをインストール
+
+```
+vim
+:NeoBundleInstall
+```
+
+### Windows
+
+#### 1. シンボリックリンクを貼る（PowerShell / 管理者権限）
+
+```powershell
+New-Item -ItemType SymbolicLink -Path "$HOME\_vimrc" -Target "$HOME\work\buzzkuri\dotfiles\_vimrc"
+```
+
+#### 2. vim-plug をインストール
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
+  ni "$HOME/vimfiles/autoload/plug.vim" -Force
+```
+
+#### 3. プラグインをインストール
+
+```
+vim
+:PlugInstall
+```
+
+---
+
+## Perl 開発時の追加設定
+
 if you use Perl for developing, add charset as follow
 
 ```
@@ -121,6 +173,8 @@ bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_te
 
 スクリプトが行うこと：
 - `.claude/rules/*.md` を自動生成（プレースホルダーを置換済み）
+- `.claude/settings.json` を生成（`claude-settings.json.template` から）
+- `.claude/hooks/*.sh` を生成（実行権限付き）
 - `CLAUDE.md` が存在しない場合はテンプレートからコピー＆置換
 - `CLAUDE.md` が既存の場合はdiffを表示して手動マージを案内
 
@@ -129,8 +183,8 @@ bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_te
 ```bash
 cd /path/to/project
 git diff
-git add .claude/rules/ CLAUDE.md
-git commit -m "📝: Claude rulesファイルを追加"
+git add .claude/rules/ .claude/settings.json .claude/hooks/ CLAUDE.md
+git commit -m "📝: Claude 制御ファイルを追加"
 ```
 
 | テンプレート | 用途 |

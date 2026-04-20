@@ -1,6 +1,15 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits"
+    "defaultMode": "acceptEdits",
+    "deny": [
+      "Read(.env*)",
+      "Read(*.pem)",
+      "Read(*.key)",
+      "Read(**/credentials/**)",
+      "Read(**/.ssh/**)",
+      "Write(.env*)",
+      "Edit(.env*)"
+    ]
   },
   "model": "sonnet",
   "statusLine": {

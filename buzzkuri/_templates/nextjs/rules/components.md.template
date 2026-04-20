@@ -1,0 +1,29 @@
+---
+description: コンポーネント・フィーチャー設計規約（UI 層に適用）
+paths:
+  - "components/**"
+  - "features/**"
+  - "app/**"
+  - "pages/**"
+---
+
+# コンポーネント・フィーチャー設計規約
+
+## ディレクトリ責務
+
+- `app/` または `pages/`: ルーティングのみ。ロジックは持ち込まない
+- `components/`: 再利用可能な汎用 UI コンポーネント。ビジネスロジックを含まない
+- `features/` または `modules/`: 機能単位（コンポーネント + hooks + 型）。ここにビジネスロジックを集約する
+- `hooks/`: 複数 feature で共有するカスタムフック
+
+## 設計原則
+
+- コンポーネントの責務は「表示」のみ。データ取得・変換は hooks に委譲する
+- Props の過剰な drilling は禁止。3層を超える場合は Context または状態管理を検討する
+- Server Components / Client Components の境界を明示する（Next.js App Router の場合）
+- `"use client"` ディレクティブは必要最小限の範囲に留める
+
+## スタイリング
+
+- {{STYLING_TOOL}} を使用する
+- インラインスタイル（`style=` 属性）は原則禁止

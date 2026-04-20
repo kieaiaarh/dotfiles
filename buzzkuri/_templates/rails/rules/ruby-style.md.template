@@ -1,3 +1,9 @@
+---
+description: Ruby コーディング規約（.rb ファイルに適用）
+paths:
+  - "**/*.rb"
+---
+
 # Ruby コーディング規約
 
 ## frozen_string_literal（絶対禁止）
