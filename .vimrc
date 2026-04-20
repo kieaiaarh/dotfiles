@@ -112,6 +112,7 @@ NeoBundle 'tpope/vim-fugitive'
 " ファイルをtree表示してくれる
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle "tyru/caw.vim.git"
+NeoBundle 'vim-syntastic/syntastic'
 call neobundle#end()
 
 " Required:
