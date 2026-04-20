@@ -81,6 +81,12 @@ Sentryのアクセストークンは [Sentry の設定画面](https://sentry.io/
 # 例: Railsプロジェクト
 cp buzzkuri/_templates/rails/CLAUDE.md.template /path/to/new-project/CLAUDE.md
 cp buzzkuri/_templates/rails/claude-settings.json.template /path/to/new-project/.claude/settings.json
+
+# rulesファイルも一括コピー
+mkdir -p /path/to/new-project/.claude/rules
+for f in buzzkuri/_templates/rails/rules/*.md.template; do
+  cp "$f" "/path/to/new-project/.claude/rules/$(basename "$f" .template)"
+done
 ```
 
 `{{RUBY_VERSION}}` 等のプレースホルダーをプロジェクトに合わせて置き換えてください。
@@ -91,3 +97,37 @@ cp buzzkuri/_templates/rails/claude-settings.json.template /path/to/new-project/
 | `buzzkuri/_templates/nextjs/` | Next.js フロントエンド |
 | `buzzkuri/_templates/infra-cdk/` | AWS CDK インフラ |
 | `buzzkuri/_templates/wordpress/` | WordPress / Docker |
+
+---
+
+### 既存プロジェクトへのテンプレート変更反映手順
+
+dotfilesのテンプレートを更新した後、既存プロジェクトへ反映するには `scripts/sync-rules-to-project.sh` を使います。
+
+#### 使い方
+
+```bash
+bash scripts/sync-rules-to-project.sh <テンプレート種別> <プロジェクトパス>
+
+# 例
+bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend
+bash scripts/sync-rules-to-project.sh infra-cdk ~/work/buzzkuri/infra
+```
+
+#### スクリプトの動作
+
+1. `.claude/rules/*.md` をテンプレートと比較し、差分があれば表示
+2. 新規ファイルは自動追加、既存ファイルは差分確認後に上書きするか選択
+3. `CLAUDE.md` はプレースホルダーが含まれるため自動更新しない。diffを表示するので手動でマージ
+
+#### テンプレート更新時の標準フロー
+
+```
+dotfilesのテンプレートを編集
+    ↓
+git commit & push → PR → マージ
+    ↓
+bash scripts/sync-rules-to-project.sh <種別> <プロジェクトパス>
+    ↓
+プロジェクトリポで git diff 確認 → commit & push → PR
+```
