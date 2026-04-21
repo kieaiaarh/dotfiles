@@ -105,6 +105,14 @@ bash install.sh
 | copy | `~/.vim/autoload/pathogen.vim` |
 | clone | NeoBundle → `~/.vim/bundle/neobundle.vim` |
 | 設定 | 各リポジトリの `.git/info/exclude` に AI ファイルを追加 |
+| sync | clone 済みリポジトリに `.claude/rules/` 等を同期 |
+
+> **注意**: `repos.local` に記載されていてもリポジトリが未 clone のものはスキップされます。
+> clone 後に個別で sync する場合は以下を実行してください。
+>
+> ```bash
+> bash scripts/sync-rules-to-project.sh <テンプレート種別> <プロジェクトパス>
+> ```
 
 #### 4. Claude にログイン
 
