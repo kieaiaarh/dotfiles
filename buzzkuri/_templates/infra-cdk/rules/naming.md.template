@@ -1,0 +1,59 @@
+# 命名規則
+
+## スタック名
+
+PascalCase。`<プラットフォーム><ドメイン><タイプ>Stack` の形式。
+
+```
+AiPlatformNetworkStack
+AiPlatformIamStack
+AiPlatformLoggingStack
+BedrockAccessStack
+AiInternalEngineeringAppStack
+```
+
+## サービス名
+
+kebab-case。`lib/config/services.ts` の `ServiceName` 型で管理する。
+
+```
+ai-internal-engineering
+ai-internal-business
+training-dx
+```
+
+## AWSリソース名
+
+`${PLATFORM_NAME}-${serviceName}-${resourceType}` の形式。環境が複数ある場合は末尾に suffix を付ける。
+
+```
+ai-platform-ai-internal-engineering-lambda
+ai-platform-bedrock-access-role-staging
+```
+
+## 環境 suffix
+
+環境を名前で区別する必要がある場合は末尾に `-${env}` を付ける。
+
+```
+ai-platform-network-stack-staging
+ai-platform-network-stack-production
+```
+
+## TypeScript の識別子
+
+- クラス・型: PascalCase
+- 変数・関数・プロパティ: camelCase
+- 定数: UPPER_SNAKE_CASE（`PROJECT_NAME`, `PLATFORM_NAME`）
+- ファイル名: kebab-case（`network-stack.ts`, `bedrock-access-stack.ts`）
+
+## タグ
+
+全リソースに以下のタグを付ける（`Tags.of(stack).add()` で適用）。
+
+| キー | 値の例 |
+|---|---|
+| `Project` | `ai-infra` |
+| `Platform` | `ai-platform` |
+| `Environment` | `staging` |
+| `ManagedBy` | `cdk` |

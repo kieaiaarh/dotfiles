@@ -1,0 +1,53 @@
+# デプロイメント手順
+
+## 実行順序の原則
+
+必ず `build → synth → diff → deploy` の順で行う。diff を省略しない。
+
+```bash
+npm run build        # TypeScript コンパイル（dist/ に出力）
+npm run synth        # CloudFormation テンプレート生成・確認
+npm run diff         # 既存スタックとの差分確認（必須）
+npm run deploy       # デプロイ実行
+```
+
+## 環境の切り替え
+
+環境は CDK context で切り替える。`.env` ファイルに依存しない。
+
+```bash
+npm run diff -- --context env=staging
+npm run deploy -- --context env=production
+```
+
+環境値: `local` / `staging` / `production`
+
+## マルチスタックのデプロイ順序
+
+foundation → shared → services の順でデプロイする。逆順はエラーになる。
+
+```bash
+# foundation を先にデプロイ
+cdk deploy AiPlatformNetworkStack AiPlatformIamStack AiPlatformLoggingStack
+
+# 次に shared
+cdk deploy BedrockAccessStack
+
+# 最後に services
+cdk deploy AiInternalEngineeringAppStack
+```
+
+## 初回セットアップ（bootstrap）
+
+アカウント・リージョンごとに1回だけ実行する。
+
+```bash
+npm run bootstrap
+# または
+cdk bootstrap aws://<account-id>/ap-northeast-1
+```
+
+## GitHub Actions での実行
+
+本番デプロイは GitHub Actions 経由で行う。ローカルから production に直接 deploy しない。
+認証は AWS OIDC（GitHub Actions の `aws-actions/configure-aws-credentials`）を使う。
