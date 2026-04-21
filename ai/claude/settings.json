@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits",
     "deny": [
       "Read(.env*)",
       "Read(*.pem)",
@@ -9,7 +8,8 @@
       "Read(**/.ssh/**)",
       "Write(.env*)",
       "Edit(.env*)"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   },
   "model": "sonnet",
   "statusLine": {
@@ -54,6 +54,7 @@
     }
   },
   "sandbox": {
-    "enabled": true
+    "enabled": true,
+    "enableWeakerNetworkIsolation": true
   }
 }
