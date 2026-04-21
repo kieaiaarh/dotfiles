@@ -1,96 +1,38 @@
 # dotfiles
-my dotfiles
+
+Vim・tmux・Claude Code の設定を管理するリポジトリです。  
+新しいマシンでは `install.sh` を実行するだけで、シンボリックリンクの作成・NeoBundle のインストール・Claude 制御ファイルの配布が完了します。
 
 ---
 
-## Vim セットアップ（新しいマシン）
+## 新しいマシンでのセットアップ
 
-### macOS / Linux
-
-`install.sh` が以下を自動で行います：
-
-- `.vimrc` → `~/.vimrc` のシンボリックリンク作成
-- `.tmux.conf` → `~/.tmux.conf` のシンボリックリンク作成
-- `.vimrc` → `~/.vimrc` のシンボリックリンク作成
-- `pathogen.vim` を `~/.vim/autoload/` にコピー
-- NeoBundle を `~/.vim/bundle/neobundle.vim` に clone
+### Step 1: このリポジトリをクローン
 
 ```bash
-bash ~/work/buzzkuri/dotfiles/install.sh
-```
-
-その後、以下を手動で実行：
-
-```
-# vim プラグインのインストール
-vim
-:NeoBundleInstall
-```
-
-tmux を再起動（または `tmux source ~/.tmux.conf`）して動作確認する。
-
-> **注意**: `vimfiles/ → ~/.vim/` のシンボリックリンクは貼らないこと。
-> `bundle/` がdotfilesリポに混入する原因になります。install.sh が正しく処理します。
-
-### Windows
-
-#### 1. シンボリックリンクを貼る（PowerShell / 管理者権限）
-
-```powershell
-New-Item -ItemType SymbolicLink -Path "$HOME\_vimrc" -Target "$HOME\work\buzzkuri\dotfiles\_vimrc"
-```
-
-#### 2. vim-plug をインストール
-
-```powershell
-iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
-  ni "$HOME/vimfiles/autoload/plug.vim" -Force
-```
-
-#### 3. プラグインをインストール
-
-```
-vim
-:PlugInstall
-```
-
----
-
-## Perl 開発時の追加設定
-
-if you use Perl for developing, add charset as follow
-
-```
-set encoding=euc-jp
-set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8
-```
-
----
-
-## AI制御ファイル（Claude Code）
-
-### 新しいマシンでのセットアップ手順
-
-#### 1. このリポジトリをクローン
-
-```bash
+mkdir -p ~/work/buzzkuri
 git clone <this-repo> ~/work/buzzkuri/dotfiles
+cd ~/work/buzzkuri/dotfiles
 ```
 
-#### 2. repos.local を作成する
+---
 
-`repos.template` をコピーして、このマシンで使うリポジトリパスを記載します。
+### Step 2: repos.local を作成する
+
+このマシンで使うリポジトリのパス一覧を記載します。  
+`install.sh` はここに書かれたリポジトリに Claude 制御ファイルを同期します。
 
 ```bash
-cd ~/work/buzzkuri/dotfiles
 cp repos.template repos.local
-# repos.local を編集（クローン済みリポジトリのパスを確認・修正）
+# エディタで repos.local を開き、実際のパスに合わせて編集する
 ```
 
-> `repos.local` は `.gitignore` 対象のためコミットされません。
-> まだクローンしていないリポジトリは `install.sh` が自動でスキップし、clone を促すメッセージを表示します。
+> `repos.local` は `.gitignore` 対象のためコミットされません。  
+> 未 clone のリポジトリは自動でスキップされ、clone を促すメッセージが表示されます。
 
-#### 3. install.sh を実行する
+---
+
+### Step 3: install.sh を実行する
 
 ```bash
 bash install.sh
@@ -102,19 +44,34 @@ bash install.sh
 |---|---|
 | symlink | `~/.claude/CLAUDE.md` → `ai/claude/CLAUDE.md` 他 |
 | symlink | `~/.vimrc` → `.vimrc` |
+| symlink | `~/.tmux.conf` → `.tmux.conf` |
 | copy | `~/.vim/autoload/pathogen.vim` |
 | clone | NeoBundle → `~/.vim/bundle/neobundle.vim` |
 | 設定 | 各リポジトリの `.git/info/exclude` に AI ファイルを追加 |
 | sync | clone 済みリポジトリに `.claude/rules/` 等を同期 |
 
-> **注意**: `repos.local` に記載されていてもリポジトリが未 clone のものはスキップされます。
-> clone 後に個別で sync する場合は以下を実行してください。
->
-> ```bash
-> bash scripts/sync-rules-to-project.sh <テンプレート種別> <プロジェクトパス>
-> ```
+> **注意**: `vimfiles/ → ~/.vim/` のシンボリックリンクは貼らないこと。  
+> `bundle/` が dotfiles リポに混入する原因になります。`install.sh` が正しく処理します。
 
-#### 4. Claude にログイン
+---
+
+### Step 4: Vim プラグインをインストール
+
+```bash
+vim
+```
+
+vim 起動後、以下のコマンドを実行：
+
+```
+:NeoBundleInstall
+```
+
+インストールが完了したら vim を終了し、tmux を再起動（または `tmux source ~/.tmux.conf`）して動作確認します。
+
+---
+
+### Step 5: Claude にログイン
 
 ```bash
 claude login
@@ -122,7 +79,9 @@ claude login
 
 `~/.claude.json` が自動生成されます。
 
-#### 5. MCP・個人設定を追記
+---
+
+### Step 6: MCP・個人設定を追記
 
 `ai/claude/claude.json.template` を参考に、`~/.claude.json` へ以下を手動で追記します：
 
@@ -143,21 +102,46 @@ claude login
 }
 ```
 
-Sentryのアクセストークンは [Sentry の設定画面](https://sentry.io/settings/) から取得してください。
-
-#### 6. Claudeプラグインの再インストール
-
-`ai/claude/settings.json` の `enabledPlugins` に記載のプラグインは、初回起動時に自動インストールされます。
+Sentry のアクセストークンは [Sentry の設定画面](https://sentry.io/settings/) から取得してください。
 
 ---
 
-### 新規プロジェクト立ち上げ時 / 既存プロジェクトへの反映
+### Step 7: Claude プラグインの確認
+
+`ai/claude/settings.json` の `enabledPlugins` に記載のプラグインは、Claude 初回起動時に自動インストールされます。  
+起動後にプラグインが有効になっていることを確認してください。
+
+---
+
+## Windows での Vim セットアップ
+
+### 1. シンボリックリンクを貼る（PowerShell / 管理者権限）
+
+```powershell
+New-Item -ItemType SymbolicLink -Path "$HOME\_vimrc" -Target "$HOME\work\buzzkuri\dotfiles\_vimrc"
+```
+
+### 2. vim-plug をインストール
+
+```powershell
+iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
+  ni "$HOME/vimfiles/autoload/plug.vim" -Force
+```
+
+### 3. プラグインをインストール
+
+```
+vim
+:PlugInstall
+```
+
+---
+
+## 新規プロジェクト立ち上げ時 / 既存プロジェクトへの Claude ルール反映
 
 `scripts/sync-rules-to-project.sh` を使います。
 
-#### 手順
-
-**1. envファイルを作成する**
+### 1. env ファイルを作成する
 
 ```bash
 cp buzzkuri/_templates/rails/.env.template buzzkuri/_templates/rails/.env.local
@@ -181,14 +165,12 @@ PROJECT_NAMESPACE=compliance/api
 
 > `.env.local` は `.gitignore` 対象なのでコミットされません。
 
-**2. syncスクリプトを実行する**
+### 2. sync スクリプトを実行する
 
-dotfilesのルートから実行する場合：
+dotfiles のルートから実行：
 
 ```bash
-# どちらでも動く
 bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
-./scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_templates/rails/.env.local
 ```
 
 別ディレクトリから実行する場合はフルパスで：
@@ -198,13 +180,14 @@ bash scripts/sync-rules-to-project.sh rails ~/work/buzzkuri/backend buzzkuri/_te
 ```
 
 スクリプトが行うこと：
+
 - `.claude/rules/*.md` を自動生成（プレースホルダーを置換済み）
 - `.claude/settings.json` を生成（`claude-settings.json.template` から）
 - `.claude/hooks/*.sh` を生成（実行権限付き）
 - `CLAUDE.md` が存在しない場合はテンプレートからコピー＆置換
-- `CLAUDE.md` が既存の場合はdiffを表示して手動マージを案内
+- `CLAUDE.md` が既存の場合は diff を表示して手動マージを案内
 
-**3. プロジェクトリポで確認・コミット**
+### 3. プロジェクトリポで確認・コミット
 
 ```bash
 cd /path/to/project
@@ -212,6 +195,8 @@ git diff
 git add .claude/rules/ .claude/settings.json .claude/hooks/ CLAUDE.md
 git commit -m "📝: Claude 制御ファイルを追加"
 ```
+
+利用可能なテンプレート：
 
 | テンプレート | 用途 |
 |---|---|
@@ -222,14 +207,25 @@ git commit -m "📝: Claude 制御ファイルを追加"
 
 ---
 
-### テンプレート更新時の標準フロー
+## テンプレート更新時の標準フロー
 
 ```
-dotfilesのテンプレートを編集
+dotfiles のテンプレートを編集
     ↓
 git commit & push → PR → マージ
     ↓
 bash scripts/sync-rules-to-project.sh <種別> <プロジェクトパス> <envファイル>
     ↓
 プロジェクトリポで git diff 確認 → commit & push → PR
+```
+
+---
+
+## 補足：Perl 開発時の追加設定
+
+Perl で開発する場合は、`.vimrc` に以下を追記してください：
+
+```
+set encoding=euc-jp
+set fileencodings=iso-2022-jp,euc-jp,sjis,utf-8
 ```
