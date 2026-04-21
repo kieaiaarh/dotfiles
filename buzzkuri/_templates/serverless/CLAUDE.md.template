@@ -1,0 +1,86 @@
+# AGENTS ガイド（{{PROJECT_NAME}}）
+
+このドキュメントは、エージェント/開発者が安全かつ一貫性を持って作業するための運用・実装規約です。
+**優先度**: 直接の指示 > 本ドキュメント > 既存コードの慣習
+
+詳細ルールは `.claude/rules/` を参照すること。
+
+## 対象と範囲
+- 対象: Serverless Framework アプリケーション（AWS Lambda）
+- 影響範囲: リポジトリ全体（本ファイル配下）
+
+## Profiles（運用モード）
+- **readonly**: 設計・調査のみ。コード変更なし。ネットワーク禁止。
+- **unattended**: 短時間の全自動（検証環境のみ）。開始前に必ずブランチ作成。
+
+---
+
+## 技術スタック（要点）
+- Node.js `{{NODE_VERSION}}` / Serverless Framework `{{SLS_VERSION}}`
+- 言語: TypeScript（strict mode）
+- ランタイム: AWS Lambda（arm64）
+- バンドラ: esbuild（serverless-esbuild）
+- インフラ: AWS（Lambda / Step Functions / SSM / Secrets Manager）
+
+---
+
+## 最重要実行ルール
+- コマンド実行は必ず最初に README と Makefile を確認し、Makefile ターゲットを最優先で使うこと
+- `serverless deploy` の直接実行は禁止。必ず make ターゲットを経由すること
+- **本番環境へのデプロイはユーザーに確認を取ってから実施すること**
+- 秘密情報（トークン・APIキー）は SSM Parameter Store / Secrets Manager で管理。コードに直書き禁止
+- sandbox 制約で失敗した場合は迂回せず、実行しようとしたコマンドとユーザーへの依頼事項を分けて報告すること
+
+---
+
+## ディレクトリ責務
+- `src/handlers/`: Lambda ハンドラ。エントリポイントのみ。ロジックは持ち込まない
+- `src/services/`: ビジネスロジック
+- `src/lib/` または `src/utils/`: 汎用ユーティリティ
+- `src/types/`: 型定義
+- `statemachines/`: Step Functions ASL 定義
+
+---
+
+## コーディング規約
+- TypeScript strict mode 必須
+- `any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
+- ハンドラは薄く保つ。ロジックは services/ に分離する
+- 省略語禁止
+- コメント・ログ・テストの describe/it はすべて日本語統一
+
+### Guardrails
+- 外部通信・AWS リソース操作は unattended 禁止
+- `console.log` をコミットに含めない（CloudWatch Logs への出力は logger 経由）
+- IAM ポリシーは最小権限原則。`*` アクション・リソースは禁止
+
+---
+
+## ワークフロー（最小）
+- 1ブランチ=1機能
+- 実装 → 型チェック（`tsc --noEmit`）→ lint → テスト
+- .gitmessage に従ってコミットすること（日本語統一・絵文字を適切に使うこと）
+
+## PR規約
+- タイトル: 対象 Lambda/機能を明記（例）[Lambda] Slack → GitHub dispatch ハンドラ追加
+- 本文:
+  * 変更概要 / スコープ外
+  * 動作確認
+  * 新規/編集テスト一覧と結果
+  * チェックリスト
+     - `tsc --noEmit` が通ること
+     - ESLint エラーなし
+     - 秘密情報がコードに含まれていないこと
+
+---
+
+# 便利コマンド
+- 型チェック: `npx tsc --noEmit`
+- Lint: `npm run lint`
+- テスト: `npm run test`
+- ローカル実行: `npx serverless invoke local --function <name>`
+
+このガイドにない判断は、既存コードの慣習と CI 設定（.github/workflows）を最優先に合わせること。
+
+@.claude/rules/typescript.md
+@.claude/rules/workflow.md
