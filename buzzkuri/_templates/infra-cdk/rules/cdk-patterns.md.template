@@ -1,0 +1,34 @@
+# CDK 設計パターン
+
+## スタック構成の原則
+
+スタックは3層に分ける。依存方向は foundation → shared → services の一方向のみ。
+
+```
+lib/stacks/
+├── foundation/   # VPC・IAM・Logging など、全スタックの前提となる基盤
+├── shared/       # 複数サービスから参照されるリソース（Bedrock アクセスなど）
+└── services/     # サービス固有のリソース。foundation/shared に依存してよい
+```
+
+## constructs/ と stacks/ の使い分け
+
+- `lib/constructs/` — 再利用可能なコンポーネント（L2/L3 相当）。特定スタックに依存しない
+- `lib/stacks/` — CloudFormation スタック。constructs を組み合わせて構成する
+
+コンストラクトが1スタックにしか使われないと確定している場合でも、将来の再利用を考えて `constructs/` に置く。
+
+## コンストラクトのレベル
+
+- L1（Cfn プレフィックス）は原則使わない。L2/L3 で表現できない場合のみ許容
+- プロジェクト固有の繰り返しパターンはカスタム L3 コンストラクトとして `lib/constructs/` に切り出す
+
+## スタック間の値の受け渡し
+
+- スタック間の参照は `cdk.CfnOutput` + `cdk.Fn.importValue` ではなく、コンストラクタ引数（Props）経由で渡す
+- クロススタック参照が必要な場合は `stack.exportValue()` を使い、暗黙的な依存を避ける
+
+## bin/ai-infra.ts の役割
+
+- スタックのインスタンス化と `env`（account/region）の解決のみ行う
+- ビジネスロジックや設定値の計算は `lib/config/` に置く

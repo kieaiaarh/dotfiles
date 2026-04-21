@@ -1,0 +1,64 @@
+# テスト方針
+
+## テストの種類
+
+CDK プロジェクトでは以下の2種類を書く。
+
+| 種類 | 目的 |
+|---|---|
+| **Fine-grained assertions** | 特定リソースのプロパティを検証する |
+| **Snapshot テスト** | テンプレート全体の意図しない変更を検知する |
+
+## Fine-grained assertions の書き方
+
+```typescript
+import { Template } from 'aws-cdk-lib/assertions'
+import * as cdk from 'aws-cdk-lib'
+import { AiPlatformNetworkStack } from '../lib/stacks/foundation/network-stack'
+
+test('VPC が作成される', () => {
+  const app = new cdk.App()
+  const stack = new AiPlatformNetworkStack(app, 'TestStack', { env: { account: '123456789012', region: 'ap-northeast-1' } })
+  const template = Template.fromStack(stack)
+
+  template.hasResourceProperties('AWS::EC2::VPC', {
+    EnableDnsHostnames: true,
+  })
+})
+```
+
+## Snapshot テストの書き方
+
+```typescript
+test('スタックのスナップショット', () => {
+  const app = new cdk.App()
+  const stack = new AiPlatformNetworkStack(app, 'TestStack', { env: { account: '123456789012', region: 'ap-northeast-1' } })
+  const template = Template.fromStack(stack)
+
+  expect(template.toJSON()).toMatchSnapshot()
+})
+```
+
+スナップショットは意図的な変更時のみ更新する（`jest --updateSnapshot`）。
+
+## テストの配置
+
+`test/` ディレクトリはスタックの構成に合わせて揃える。
+
+```
+test/
+├── stacks/
+│   ├── foundation/
+│   │   ├── network-stack.test.ts
+│   │   └── iam-stack.test.ts
+│   └── shared/
+│       └── bedrock-access-stack.test.ts
+└── constructs/
+    └── bedrock/
+```
+
+## テスト実行
+
+```bash
+npm test
+```
