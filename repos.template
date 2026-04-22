@@ -4,6 +4,7 @@
 #
 # フォーマット: <パス> <テンプレート種別>
 # テンプレート種別: rails / nextjs / infra-cdk / wordpress / serverless / static
+#                  cp-rails / cp-nextjs / cp-infra-cdk
 # env ファイルは buzzkuri/_templates/<種別>/.env.local を自動参照する
 
 ~/work/buzzkuri/backend rails
@@ -18,3 +19,8 @@
 ~/work/buzzkuri/compliance_top static
 ~/work/buzzkuri/partner nextjs
 ~/work/buzzkuri/portal nextjs
+
+# compliance-police
+~/work/compliance-police/backend cp-rails
+~/work/compliance-police/frontend cp-nextjs
+~/work/compliance-police/infra cp-infra-cdk

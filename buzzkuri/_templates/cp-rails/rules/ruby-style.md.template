@@ -1,0 +1,25 @@
+---
+paths:
+  - "app/**/*.rb"
+  - "lib/**/*.rb"
+  - "config/**/*.rb"
+---
+
+# Ruby コーディング規約
+
+## frozen_string_literal（書かない）
+- `# frozen_string_literal: true / false` をファイル先頭に書かない。既存にあれば削除。
+
+## Ruby {{RUBY_VERSION}} 記法
+- ハッシュ省略 `{ aa: }` を積極活用
+- endレス定義を積極活用（例: `def granted?(org) = org.consented_at && ...`）
+
+## 命名
+- メソッド名は「形容詞＋名詞」で意図を明示（例: `masked_content`, `expired_tokens`）
+- 省略語禁止（例: `ms/*` は不可、`microsoft/*` を使う）
+
+## エラー処理
+- エラー処理は専用メソッドに分離。メインロジックに rescue を混在させない。
+
+## サイズ目安
+- Class ≤ 100行、Method ≲ 30行

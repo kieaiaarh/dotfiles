@@ -1,0 +1,28 @@
+---
+paths:
+  - "cdk/test/**/*.ts"
+  - "cdk/test/**/*.test.ts"
+---
+
+# テスト方針
+
+## テストの種類
+
+| 種類 | 目的 |
+|---|---|
+| Fine-grained assertions | 特定リソースのプロパティを検証 |
+| Snapshot テスト | テンプレート全体の意図しない変更を検知 |
+
+## 実行
+
+```bash
+npm test
+```
+
+## テストの配置
+
+`test/` ディレクトリはスタックの構成に合わせて揃える。
+
+## Snapshot 更新
+
+意図的な変更時のみ更新する（`jest --updateSnapshot`）。

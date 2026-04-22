@@ -1,0 +1,29 @@
+---
+paths:
+  - "cdk/**/*.ts"
+  - "cdk/package.json"
+---
+
+# デプロイメント手順
+
+## 実行順序
+
+必ず `build → synth → diff → deploy` の順。diff を省略しない。
+
+```bash
+npm run build
+npm run synth:staging     # CloudFormation テンプレート生成・確認
+npm run diff:staging      # 既存スタックとの差分確認（必須）
+```
+
+## 環境の切り替え
+
+環境は CDK context で切り替える。npm scripts に `-c env=staging` / `-c env=production` が定義済み。
+
+## デプロイ順序
+
+staging → production。ローカルから production に直接 deploy しない。
+
+## GitHub Actions
+
+本番デプロイは GitHub Actions 経由。認証は AWS OIDC を使用。

@@ -1,0 +1,26 @@
+---
+paths:
+  - "cdk/lib/**/*.ts"
+  - "cdk/bin/**/*.ts"
+---
+
+# CDK 設計パターン
+
+## スタック構成
+
+スタックは依存方向が一方向になるように構成する。
+
+## constructs/ と stacks/ の使い分け
+
+- `cdk/lib/constructs/` — 再利用可能なコンポーネント（L2/L3 相当）。特定スタックに依存しない
+- `cdk/lib/stacks/` — CloudFormation スタック。constructs を組み合わせて構成する
+
+## コンストラクトのレベル
+
+- L1（Cfn プレフィックス）は原則使わない。L2/L3 で表現できない場合のみ許容
+- プロジェクト固有の繰り返しパターンはカスタム L3 コンストラクトとして切り出す
+
+## スタック間の値の受け渡し
+
+- `cdk.CfnOutput` + `cdk.Fn.importValue` ではなく、コンストラクタ引数（Props）経由で渡す
+- クロススタック参照が必要な場合は `stack.exportValue()` を使い、暗黙的な依存を避ける

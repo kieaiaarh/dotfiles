@@ -1,0 +1,15 @@
+# {{PROJECT_NAME}} — Claude Code ガイド
+
+**優先度**: 直接の指示 > 本ドキュメント > AGENTS.md > 既存コードの慣習
+
+詳細ルールは `.claude/rules/` を参照すること。
+
+@AGENTS.md
+
+---
+
+## Claude Code 固有の補足
+
+- `.claude/rules/` に分割ルールあり。paths frontmatter でスコープを絞っているため、該当ファイル操作時に自動ロードされる
+- sandbox 制約で Docker ソケットに触れない場合は迂回せず、Make ターゲット / 制約内容 / ユーザー実行コマンドを分けて報告すること
+- DB 変更は AI 単独で判断・実行しない。必ずユーザーに確認を取ること

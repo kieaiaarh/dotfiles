@@ -1,0 +1,20 @@
+---
+paths:
+  - "app/models/**/*.rb"
+  - "app/services/**/*.rb"
+  - "app/jobs/**/*.rb"
+---
+
+# Models / Services / Jobs 規約
+
+## Models (`app/models/*`)
+- ActiveRecord + Concerns + ドメインロジック
+- バリデーション・スコープなど、データに関する責務を持たせる
+
+## Services (`app/services/*`)
+- 複数モデルにまたがる処理はService層に記述
+- `BaseService` を使う場合は `#run` と `#execute` を実装
+- Testable な設計を維持
+
+## Jobs (`app/jobs/*`)
+- ActiveJob とし、必ず `queue_as` を指定

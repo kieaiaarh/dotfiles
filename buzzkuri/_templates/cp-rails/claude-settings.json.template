@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make *)",
+      "Bash(git *)",
+      "WebFetch(domain:api.github.com)"
+    ],
+    "deny": [
+      "Write(.env*)",
+      "Edit(.env*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cmd=$(echo \"$CLAUDE_TOOL_INPUT\" | jq -r '.command // empty' 2>/dev/null || echo ''); if [ -n \"$cmd\" ] && echo \"$cmd\" | grep -qE 'ENV=production'; then echo '⚠️  本番環境への操作です。意図的な操作のみ続行してください。' >&2; exit 2; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

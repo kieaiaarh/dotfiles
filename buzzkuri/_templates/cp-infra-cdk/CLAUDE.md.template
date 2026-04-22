@@ -1,0 +1,21 @@
+# {{PROJECT_NAME}} — Claude Code ガイド（infra）
+
+AWS インフラを管理するリポジトリ。
+
+- **メイン**: CDK TypeScript（`cdk/`）
+- **ローカル開発**: docker-compose + nginx（`locals/`）
+
+**優先度**: 直接の指示 > 本ドキュメント > AGENTS.md > 既存コードの慣習
+
+詳細ルールは `.claude/rules/` を参照すること。
+
+@AGENTS.md
+
+---
+
+## Claude Code 固有の補足
+
+- `.claude/rules/` に CDK パターン・セキュリティ・デプロイ・命名・テストのルールあり。`cdk/` 配下のファイル操作時に自動ロードされる
+- `.claude/hooks/` で破壊的 Bash コマンドと本番ファイル書き込みを自動検知・ブロックする
+- `cdk synth` / `cdk diff` は必ずデプロイ前に実行。diff を省略しない
+- 10分以上かかる見込みの操作は事前に所要時間を提示すること
