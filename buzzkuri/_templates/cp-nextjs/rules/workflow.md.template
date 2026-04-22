@@ -1,8 +1,3 @@
----
-paths:
-  - "**/*"
----
-
 # 開発ワークフロー・PR 規約
 
 ## Make コマンド（必ずこれを使う）
@@ -10,12 +5,12 @@ paths:
 - ビルド: `make build`
 - Lint: `make lint`
 - 型チェック: `make typecheck`
-- テスト: `make test_run`
+- テスト: `make test`
 - npm ci: `make npm_ci`
 
 ## ワークフロー
 - 1ブランチ = 1機能
-- 実装 → `make typecheck` → `make lint` → `make test_run`
+- 実装 → `make typecheck` → `make lint` → `make test`
 - `.gitmessage` に従う（日本語統一・絵文字）
 - コメント・ログもすべて日本語
 

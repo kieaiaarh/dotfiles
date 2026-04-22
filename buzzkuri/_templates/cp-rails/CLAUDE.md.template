@@ -1,6 +1,6 @@
 # {{PROJECT_NAME}} — Claude Code ガイド
 
-**優先度**: 直接の指示 > 本ドキュメント > 既存コードの慣習
+**優先度**: 直接の指示 > 本ドキュメント > AGENTS.md > 既存コードの慣習
 
 詳細ルールは `.claude/rules/` を参照すること。
 
@@ -8,51 +8,8 @@
 
 ---
 
-## 技術スタック
+## Claude Code 固有の補足
 
-- Ruby `{{RUBY_VERSION}}` / Rails `{{RAILS_VERSION}}`
-- DB: {{DB_ENGINE}}（スキーマ管理: Ridgepole `db/Schemafile`）
-- ジョブ: {{JOB_FRAMEWORK}}
-- 認証: 独自 concern（`Businesses::Authentications::Session` 等）
-- View: Jbuilder（`json.key_format! camelize: :lower`）、CSV は `*.csv.ruby`
-- Test: RSpec（request spec 中心）、FactoryBot、Shoulda Matchers
-- 外部連携: SendGrid / Slack / Teams / Microsoft / AWS Bedrock
-
-## 最重要実行ルール
-
-- Docker コンテナ前提。コマンドは README → Makefile を確認し、**Make ターゲット最優先**
-- `docker compose` / `bundle exec` / `bin/rails` 等の直接実行は Makefile に代替がない場合のみ
-- DB 変更は AI 単独で判断・実行しない。Ridgepole（`db/Schemafile`）のみ。AR migration 禁止
-- sandbox 制約で失敗した場合は迂回せず報告（Make ターゲット / 制約内容 / ユーザー実行コマンド）
-
-## Make コマンド早見表
-
-- RuboCop: `make rubocop_exec TARGET='app/path'`
-- RSpec: `make rspec_exec FILES='spec/path'`
-- DB: `make db_up_d` / `make db_setup` / `make ridgepole_apply`
-- Bundler: `make bundle_install_exec`（起動中）/ `make bundle_install`（新規）
-- Console: `make rails_c`
-- Rake: `make rake_exec TASK=タスク名`
-- AWS SSO: `make aws_sso_env AWS_PROFILE=<profile>`
-
-## ディレクトリ責務
-
-- `app/controllers/*`: 交通整理のみ。`compliance/api` 配下の名前空間
-- `app/models/*`: ActiveRecord + concerns + ドメインロジック
-- `app/services/*`: サービス層。`BaseService` 継承、`#run` / `#execute` 実装
-- `app/jobs/*`: ActiveJob（`queue_as` 必須）
-- `app/views/*`: Jbuilder + CSV。`locals` 渡し優先
-- `spec/*`: RSpec（`spec/requests/compliance/api/*` は controller 単位）
-
-## ワークフロー
-
-- 1ブランチ = 1機能/API
-- 実装 → Jbuilder → `make rubocop_exec` → `make rspec_exec`
-- `.gitmessage` に従いコミット（日本語統一・絵文字）
-- コメント・ログ・RSpec describe/context・Rake タスクもすべて日本語
-
-## PR 規約
-
-- タイトル: 対象 API を明記（例: `[API] GET /compliance/api/events`）
-- **1PR = 1論理変更**。無関係なリファクタを混ぜない
-- 本文: 変更概要 / スコープ外 / 動作確認 / RSpec 一覧と結果 / チェックリスト
+- `.claude/rules/` に分割ルールあり。paths frontmatter でスコープを絞っているため、該当ファイル操作時に自動ロードされる
+- sandbox 制約で Docker ソケットに触れない場合は迂回せず、Make ターゲット / 制約内容 / ユーザー実行コマンドを分けて報告すること
+- DB 変更は AI 単独で判断・実行しない。必ずユーザーに確認を取ること

@@ -15,7 +15,7 @@ for pattern in "${PROD_PATTERNS[@]}"; do
   if echo "$FILE_PATH" | grep -qi "$pattern"; then
     echo "⚠️  本番関連ファイルへの書き込みを検知しました: $FILE_PATH" >&2
     echo "   意図的な変更か確認し、staging 検証済みであることを確認してから続行すること。" >&2
-    exit 1
+    exit 2
   fi
 done
 
@@ -23,7 +23,7 @@ done
 if echo "$FILE_PATH" | grep -qE '\.env($|\.)'; then
   echo "⚠️  .env ファイルへの書き込みを検知しました: $FILE_PATH" >&2
   echo "   秘密情報を含む可能性があります。ユーザーの確認を得てから続行すること。" >&2
-  exit 1
+  exit 2
 fi
 
 exit 0

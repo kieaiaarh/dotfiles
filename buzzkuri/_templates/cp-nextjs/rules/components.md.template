@@ -9,7 +9,7 @@ paths:
 ## 基本
 - 関数コンポーネントのみ（クラスコンポーネント禁止）
 - Props は interface で定義
-- Radix UI を UI プリミティブとして使用。スタイリングは clsx で合成
+- Radix UI を UI プリミティブとして使用。スタイリングは SCSS Modules + clsx で合成
 
 ## 構造
 - ページ固有コンポーネント → `app/_components/`
@@ -17,5 +17,5 @@ paths:
 - ロジックはカスタムフック（`lib/hooks/`）に分離
 
 ## データ取得
-- サーバーコンポーネントでの fetch、またはクライアントでは TanStack Query を使用
-- API クライアントは `lib/api/` に集約
+- Static SPA（SSR なし）のため、クライアントサイドで TanStack Query を使用
+- API クライアントは `lib/apis/` に集約（`ComplianceApiClient.ts` がベース）
