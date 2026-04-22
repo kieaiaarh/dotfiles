@@ -24,7 +24,15 @@ cd ~/work/buzzkuri/dotfiles
 
 ```bash
 cp repos.template repos.local
-# エディタで repos.local を開き、実際のパスに合わせて編集する
+# エディタで repos.local を開き、自分のマシンの clone 先パスに合わせて編集する
+```
+
+`repos.template` は標準的なパス（`~/work/buzzkuri/backend` 等）で記載していますが、PC によって clone 先が異なる場合があります。`repos.local` のパスを自分の環境に合わせて書き換えてください。
+
+```
+# 例: clone 先が ~/projects 配下の場合
+~/projects/buzzkuri/backend rails
+~/projects/compliance-police/frontend cp-nextjs
 ```
 
 > `repos.local` は `.gitignore` 対象のためコミットされません。  
