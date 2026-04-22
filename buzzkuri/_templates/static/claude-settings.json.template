@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)"
+    ],
+    "deny": [
+      "Write(.env*)",
+      "Edit(.env*)"
+    ]
+  }
+}

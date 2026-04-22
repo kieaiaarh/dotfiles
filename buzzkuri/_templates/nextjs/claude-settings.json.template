@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(make *)",
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git *)",
+      "WebFetch(domain:api.github.com)"
+    ],
+    "deny": [
+      "Write(.env*)",
+      "Edit(.env*)"
+    ]
+  }
+}
