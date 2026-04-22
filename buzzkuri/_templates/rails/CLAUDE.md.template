@@ -118,8 +118,3 @@
 - DB変更は必ず {{DB_SCHEMA_TOOL}}。ARマイグレーションは禁止。AI単独判断禁止、ユーザーに確認すること。
 
 このガイドにない判断は、既存コードの慣習と CI 設定（.github/workflows）を最優先に合わせること。
-
-@.claude/rules/ruby-style.md
-@.claude/rules/models-services.md
-@.claude/rules/rspec.md
-@.claude/rules/workflow.md

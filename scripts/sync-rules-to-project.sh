@@ -38,16 +38,21 @@ if [ -n "$ENV_FILE" ] && [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
+# リポパスから PROJECT_NAME を自動生成（例: ~/work/buzzkuri/backend → buzzkuri/backend）
+AUTO_PROJECT_NAME=$(echo "$PROJECT_PATH" | sed 's|.*/work/||')
+
 # プレースホルダーを置換する関数（bash 3.x対応）
 apply_env() {
   local file="$1"
-  [ -z "$ENV_FILE" ] && return
-  [ ! -f "$ENV_FILE" ] && return
-  while IFS='=' read -r key value; do
-    [[ "$key" =~ ^#.*$ ]] && continue
-    [ -z "$key" ] && continue
-    sed -i.bak "s|{{${key}}}|${value}|g" "$file" && rm -f "${file}.bak"
-  done < "$ENV_FILE"
+  if [ -n "$ENV_FILE" ] && [ -f "$ENV_FILE" ]; then
+    while IFS='=' read -r key value; do
+      [[ "$key" =~ ^#.*$ ]] && continue
+      [ -z "$key" ] && continue
+      sed -i.bak "s|{{${key}}}|${value}|g" "$file" && rm -f "${file}.bak"
+    done < "$ENV_FILE"
+  fi
+  # PROJECT_NAME が未置換なら自動生成値で置換
+  sed -i.bak "s|{{PROJECT_NAME}}|${AUTO_PROJECT_NAME}|g" "$file" && rm -f "${file}.bak"
 }
 
 [ -n "$ENV_FILE" ] && echo "envファイルを読み込みます: $ENV_FILE"

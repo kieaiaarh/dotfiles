@@ -1,89 +1,65 @@
-# AGENTS ガイド（{{PROJECT_NAME}}）
+# {{PROJECT_NAME}} — Claude Code ガイド
 
-このドキュメントは、エージェント/開発者が安全かつ一貫性を持って作業するための運用・実装規約です。
 **優先度**: 直接の指示 > 本ドキュメント > 既存コードの慣習
 
-## 対象と範囲
-- 対象: Next.js アプリケーション（フロントエンド）
-- 影響範囲: リポジトリ全体（本ファイル配下）
-
-## Profiles（運用モード）
-- **readonly**: 設計・調査のみ。コード変更なし。
-- **unattended**: 短時間の全自動（検証環境のみ）。開始前に必ずブランチ作成。
+詳細ルールは `.claude/rules/` を参照すること。
 
 ---
 
-## 技術スタック（要点）
+## 技術スタック
+
 - Node.js `{{NODE_VERSION}}` / Next.js `{{NEXTJS_VERSION}}`
 - 言語: TypeScript（strict mode）
-- スタイリング: {{STYLING_TOOL}}（例: Tailwind CSS / CSS Modules）
-- 状態管理: {{STATE_TOOL}}（例: Zustand / Jotai / React Query）
-- API通信: {{API_CLIENT}}（例: fetch / axios / SWR）
-- テスト: {{TEST_TOOL}}（例: Vitest / Jest + Testing Library）
-- Lint: ESLint + Prettier
-
----
+- スタイリング: {{STYLING_TOOL}}
+- データ取得: {{STATE_TOOL}}
+- API通信: {{API_CLIENT}}
+- テスト: {{TEST_TOOL}}
+- Lint: ESLint + Prettier + Husky（lint-staged）
 
 ## 最重要実行ルール
-- コマンド実行は必ず最初に README と Makefile（または package.json scripts）を確認すること
-- `npm` / `yarn` / `pnpm` の直接実行は、Makefile に代替ターゲットがない場合のみ許可
-- sandbox 制約で失敗した場合は迂回せず、実行しようとしたコマンドとユーザーへの依頼事項を分けて報告すること
 
----
+- Docker コンテナ前提。コマンドは README → Makefile を確認し、**Make ターゲット最優先**
+- `npm` / `npx` の直接実行は Makefile に代替がない場合のみ
+- sandbox 制約で失敗した場合は迂回せず報告
+
+## Make コマンド早見表
+
+- 開発サーバー: `make dev`
+- ビルド: `make build`
+- Lint: `make lint`
+- 型チェック: `make typecheck`
+- テスト: `make test`
+- npm ci: `make npm_ci`
+- Shell: `make shell`
 
 ## ディレクトリ責務
-- `app/` または `pages/`: ルーティング。ロジックは持ち込まない
-- `components/`: 再利用可能なUIコンポーネント
-- `features/` または `modules/`: 機能単位のまとまり（コンポーネント + hooks + 型）
-- `hooks/`: カスタムフック
-- `lib/` または `utils/`: 汎用ユーティリティ
-- `types/`: 型定義
 
----
+- `app/`: App Router ルーティング。`(anonymous)` が公開、`(default)` が認証後
+- `app/_lib/`: App Router スコープのユーティリティ（apis / components / hooks / functions）
+- `app/_components/`: ページ固有コンポーネント
+- `lib/apis/`: API クライアント・型定義
+- `lib/components/`: 再利用可能な UI コンポーネント
+- `lib/hooks/`: カスタムフック
+- `lib/functions/`: 汎用ユーティリティ
+- `lib/types/`: 共有型定義
+- `lib/styles/`: グローバル・モジュールスタイル
 
 ## コーディング規約
-- TypeScript strict mode 必須
-- `any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
-- コンポーネントは関数コンポーネントのみ（クラスコンポーネント禁止）
-- Props は interface で定義
-- ディレクトリ、ファイル名にて省略語は禁止
-- コメント・ログ・テストの describe/it はすべて日本語統一
 
-### Guardrails
-- 外部通信は unattended禁止
-- 環境変数: `NEXT_PUBLIC_*` は公開情報のみ。秘密情報は サーバーサイドのみで参照
-- `console.log` をコミットに含めない
+- TypeScript strict mode 必須。`any` 禁止
+- コンポーネントは関数コンポーネントのみ。Props は interface で定義
+- パスエイリアス: `@/*` で import
+- 省略語禁止
+- コメント・ログ・テストの describe/it はすべて日本語
 
----
+## ワークフロー
 
-## ワークフロー（最小）
-- 1ブランチ=1機能
-- 実装 → 型チェック（`tsc --noEmit`）→ lint → テスト
-- .gitmessage に従ってコミットすること（日本語統一・絵文字を適切に使うこと）
+- 1ブランチ = 1機能
+- 実装 → `make typecheck` → `make lint` → `make test`
+- `.gitmessage` に従いコミット（日本語統一・絵文字）
 
-## PR規約
-- タイトル: 対象機能を明記（例）[Feature] ユーザー一覧画面の実装
-- 本文:
-  * 変更概要 / スコープ外
-  * 動作確認（スクショ必須）
-  * 新規/編集テスト一覧と結果
-  * チェックリスト
-     - `tsc --noEmit` が通ること
-     - ESLint エラーなし
-     - 省略語なし命名
+## PR 規約
 
----
-
-# 便利コマンド
-- 開発サーバー: `make dev` または `npm run dev`
-- 型チェック: `npx tsc --noEmit`
-- Lint: `npm run lint`
-- テスト: `npm run test`
-- ビルド: `npm run build`
-
-このガイドにない判断は、既存コードの慣習と CI 設定（.github/workflows）を最優先に合わせること。
-
-@.claude/rules/typescript.md
-@.claude/rules/testing.md
-@.claude/rules/components.md
-@.claude/rules/workflow.md
+- タイトル: 対象機能を明記（例: `[Feature] ユーザー一覧画面の実装`）
+- **1PR = 1論理変更**
+- 本文: 変更概要 / スコープ外 / 動作確認（スクショ必須） / テスト結果 / チェックリスト
