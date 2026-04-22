@@ -38,7 +38,7 @@
 ## ディレクトリ責務
 
 - `app/`: App Router ルーティング。`(anonymous)` が公開、`(default)` が認証後
-- `app/_lib/`: サーバーサイドユーティリティ
+- `app/_lib/`: App Router スコープのユーティリティ（apis / components / hooks / functions）
 - `lib/apis/`: API クライアント・React Query hooks・型定義
 - `lib/components/`: 再利用可能な UI コンポーネント（SCSS Modules）
 - `lib/hooks/`: カスタムフック

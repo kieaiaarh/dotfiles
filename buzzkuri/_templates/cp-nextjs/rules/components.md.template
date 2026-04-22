@@ -2,6 +2,7 @@
 paths:
   - "app/**/*.tsx"
   - "lib/components/**/*.tsx"
+  - "app/_lib/components/**/*.tsx"
 ---
 
 # コンポーネント規約

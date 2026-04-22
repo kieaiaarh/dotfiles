@@ -10,7 +10,7 @@ paths:
 
 ## ツール
 - Vitest を使用
-- 実行: `make test_run`
+- 実行: `make test`
 
 ## 方針
 - describe / it の記述はすべて日本語
