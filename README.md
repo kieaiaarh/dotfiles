@@ -7,6 +7,18 @@ Vim・tmux・Claude Code の設定を管理するリポジトリです。
 
 ## 新しいマシンでのセットアップ
 
+### セットアップ完了後の状態
+
+| 項目 | 適用方法 | 備考 |
+|---|---|---|
+| グローバル CLAUDE.md / settings.json / コマンド | install.sh で symlink（**自動**） | Claude Code 起動時に即適用 |
+| プラグイン（superpowers 等） | settings.json の `enabledPlugins`（**自動**） | Claude 初回起動時に自動インストール |
+| 各プロジェクトの CLAUDE.md / rules / settings / hooks | install.sh 内の sync（**自動**） | repos.local に記載されたリポが対象 |
+| .git/info/exclude（AI ファイルの除外） | install.sh（**自動**） | |
+| Claude ログイン | `claude login`（**手動**） | PC ごとに認証が必要 |
+| MCP サーバー設定 | `~/.claude.json` に手動追記（**手動**） | 秘密情報を含むため自動化不可 |
+| Vim / tmux | install.sh で symlink + clone（**自動**） | プラグインインストールのみ手動 |
+
 ### Step 1: このリポジトリをクローン
 
 ```bash
@@ -37,6 +49,20 @@ cp repos.template repos.local
 
 > `repos.local` は `.gitignore` 対象のためコミットされません。  
 > 未 clone のリポジトリは自動でスキップされ、clone を促すメッセージが表示されます。
+
+次に、テンプレートの `.env.template` をコピーして `.env.local` を作成します。  
+compliance-police 系は `.env.template` の内容がそのまま使えるため、コピーするだけで OK です。
+
+```bash
+# 例: compliance-police 系
+cp buzzkuri/_templates/cp-rails/.env.template buzzkuri/_templates/cp-rails/.env.local
+cp buzzkuri/_templates/cp-nextjs/.env.template buzzkuri/_templates/cp-nextjs/.env.local
+cp buzzkuri/_templates/cp-infra-cdk/.env.template buzzkuri/_templates/cp-infra-cdk/.env.local
+
+# buzzkuri 系はプロジェクト固有値の編集が必要
+cp buzzkuri/_templates/rails/.env.template buzzkuri/_templates/rails/.env.local
+# .env.local を編集してプロジェクトの実際の値を入力
+```
 
 ---
 
