@@ -12,7 +12,7 @@
 - 言語: TypeScript（strict mode）
 - スタイリング: {{STYLING_TOOL}}
 - データ取得: {{STATE_TOOL}}
-- API通信: {{API_CLIENT}}
+- HTTP クライアント: {{API_CLIENT}}
 - テスト: {{TEST_TOOL}}
 - Lint: ESLint + Prettier + Husky（lint-staged）
 

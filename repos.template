@@ -27,5 +27,5 @@
 ~/work/compliance-police/backend cp-rails
 ~/work/compliance-police/frontend cp-nextjs
 ~/work/compliance-police/infra cp-infra-cdk
-~/work/compliance-police/compliance cp-nextjs
+~/work/compliance-police/compliance static  # 最小限の静的SPA。cp-nextjs は過剰
 ~/work/compliance-police/compliance_top static

@@ -20,12 +20,12 @@
 ## 技術スタック（要点）
 - Ruby `{{RUBY_VERSION}}` / Rails `{{RAILS_VERSION}}`
 - DB: {{DB_ENGINE}}（スキーマ管理: {{DB_SCHEMA_TOOL}}）
-- バックグラウンドジョブ: {{JOB_FRAMEWORK}}（例: Sidekiq / GoodJob）
+- バックグラウンドジョブ: {{JOB_FRAMEWORK}}
 - 認可: Pundit
 - Test: RSpec（FactoryBot, Shoulda）
-- API Docs: {{API_DOC_TOOL}}（例: rswag）
-- Upload: {{UPLOAD_TOOL}}（例: CarrierWave / ActiveStorage）
-- 認証/メール: {{MAILER_TOOL}}（例: SendGrid / SES）
+- API Docs: {{API_DOC_TOOL}}
+- Upload: {{UPLOAD_TOOL}}
+- 認証/メール: {{MAILER_TOOL}}
 
 ---
 
