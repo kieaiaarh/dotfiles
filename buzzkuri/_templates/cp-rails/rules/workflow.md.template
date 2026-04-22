@@ -1,0 +1,24 @@
+---
+paths:
+  - "**/*"
+---
+
+# 開発ワークフロー・PR 規約
+
+## Make コマンド（必ずこれを使う）
+- RuboCop: `make rubocop_exec TARGET='app/path'`
+- RSpec: `make rspec_exec FILES='spec/path'`
+- DB: `make db_up_d` / `make db_setup` / `make ridgepole_apply`
+- Bundler: `make bundle_install_exec`（起動中）/ `make bundle_install`（新規）
+- Console: `make rails_c`
+- Rake: `make rake_exec TASK=タスク名`
+
+## PR の粒度
+- **1PR = 1論理変更**。無関係なリファクタ・別タスクを混ぜない
+- 密結合で分割が非現実な場合のみ、理由を PR 本文に書く
+
+## コミット・PR
+- `.gitmessage` に従う（日本語統一・絵文字）
+- コメント・ログ・Rake タスクも日本語統一
+- PR タイトル例: `[API] GET /compliance/api/events`
+- PR 本文必須項目: 変更概要 / スコープ外 / 動作確認 / RSpec 一覧

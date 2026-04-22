@@ -1,0 +1,24 @@
+---
+paths:
+  - "spec/**/*_spec.rb"
+  - "spec/**/*.rb"
+---
+
+# RSpec テスト規約
+
+## 構造
+- Request Spec は **Controller 単位のファイル**。Action 別に分割しない
+- `let` / `subject` / `before` を活用して DRY に書く
+- `describe`, `context`, `it` の記述はすべて**日本語**
+
+## shoulda-matchers
+- model / service のテストでは使える箇所は積極的に採用
+- 冗長な expect ブロックより宣言的な matcher を優先
+
+## RuboCop
+- 変更ファイルに対して必ず実行: `make rubocop_exec TARGET='app/path'`
+- `rubocop:disable` のインライン付与は同一指摘が再現した場合のみ許可
+- 「念のため」の抑制は禁止
+
+## DoD
+- 新規・編集した Spec は必ず Green。未編集の既存失敗はスコープ外

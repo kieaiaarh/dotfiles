@@ -200,10 +200,13 @@ git commit -m "📝: Claude 制御ファイルを追加"
 
 | テンプレート | 用途 |
 |---|---|
-| `buzzkuri/_templates/rails/` | Ruby on Rails API |
-| `buzzkuri/_templates/nextjs/` | Next.js フロントエンド |
-| `buzzkuri/_templates/infra-cdk/` | AWS CDK インフラ |
+| `buzzkuri/_templates/rails/` | Ruby on Rails API（buzzkuri） |
+| `buzzkuri/_templates/nextjs/` | Next.js フロントエンド（buzzkuri） |
+| `buzzkuri/_templates/infra-cdk/` | AWS CDK インフラ（buzzkuri） |
 | `buzzkuri/_templates/wordpress/` | WordPress / Docker |
+| `buzzkuri/_templates/cp-rails/` | Ruby on Rails API（compliance-police） |
+| `buzzkuri/_templates/cp-nextjs/` | Next.js フロントエンド（compliance-police） |
+| `buzzkuri/_templates/cp-infra-cdk/` | AWS CDK インフラ（compliance-police） |
 
 ---
 

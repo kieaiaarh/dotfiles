@@ -1,0 +1,24 @@
+---
+paths:
+  - "cdk/**/*.ts"
+---
+
+# 命名規則
+
+## スタック名
+PascalCase。ドメイン + タイプの形式。
+
+## AWS リソース名
+kebab-case。環境を区別する場合は末尾に `-${env}` suffix。
+
+## TypeScript の識別子
+- クラス・型: PascalCase
+- 変数・関数・プロパティ: camelCase
+- 定数: UPPER_SNAKE_CASE
+- ファイル名: kebab-case（例: `network-stack.ts`）
+
+## 省略語禁止
+ディレクトリ名・ファイル名・ソースコードで省略語は使わない。
+
+## タグ
+全リソースに `Project`, `Environment`, `ManagedBy` タグを付ける。

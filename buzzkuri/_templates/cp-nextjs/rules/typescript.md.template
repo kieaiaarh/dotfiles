@@ -1,0 +1,25 @@
+---
+paths:
+  - "app/**/*.ts"
+  - "app/**/*.tsx"
+  - "lib/**/*.ts"
+  - "lib/**/*.tsx"
+---
+
+# TypeScript 規約
+
+## 型安全
+- strict mode 必須
+- `any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
+- API レスポンスの型は `lib/api/` に集約
+
+## 命名
+- 省略語禁止（ディレクトリ・ファイル名・ソースすべて）
+- コンポーネント: PascalCase
+- hooks: `use` prefix + camelCase
+- 型/interface: PascalCase
+- 定数: UPPER_SNAKE_CASE
+
+## import
+- 既存の import パターン（パスエイリアス等）に従う
+- barrel export（`index.ts`）が存在するディレクトリはそこから import

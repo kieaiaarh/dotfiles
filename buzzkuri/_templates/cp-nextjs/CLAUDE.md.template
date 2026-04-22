@@ -1,0 +1,64 @@
+# {{PROJECT_NAME}} — Claude Code ガイド
+
+**優先度**: 直接の指示 > 本ドキュメント > 既存コードの慣習
+
+詳細ルールは `.claude/rules/` を参照すること。
+
+---
+
+## 技術スタック
+
+- Node.js / Next.js {{NEXTJS_VERSION}} / React {{REACT_VERSION}}
+- 言語: TypeScript（strict mode）
+- UI: Radix UI + clsx
+- 状態管理/データ取得: TanStack Query (React Query)
+- テーブル: TanStack Table
+- フォーム: React Hook Form
+- テスト: Vitest
+- Lint: ESLint + Prettier + Husky
+
+## 最重要実行ルール
+
+- Docker コンテナ前提。コマンドは README → Makefile を確認し、**Make ターゲット最優先**
+- `npm` / `npx` の直接実行は Makefile に代替がない場合のみ
+- sandbox 制約で失敗した場合は迂回せず報告
+
+## Make コマンド早見表
+
+- 開発サーバー: `make dev`
+- ビルド: `make build`
+- Lint: `make lint`
+- 型チェック: `make typecheck`
+- テスト: `make test_run`
+- npm ci: `make npm_ci`
+- Shell: `make shell`
+
+## ディレクトリ責務
+
+- `app/`: ルーティング（App Router）。ロジックは持ち込まない
+- `app/_components/`: ページ固有コンポーネント
+- `lib/components/`: 再利用可能な UI コンポーネント
+- `lib/hooks/`: カスタムフック
+- `lib/api/`: API クライアント・型定義
+- `lib/utils/`: 汎用ユーティリティ
+
+## コーディング規約
+
+- TypeScript strict mode 必須
+- `any` 禁止。型推論で解決できない場合は `unknown` + 型ガード
+- コンポーネントは関数コンポーネントのみ
+- Props は interface で定義
+- 省略語禁止
+- コメント・ログ・テストの describe/it はすべて日本語
+
+## ワークフロー
+
+- 1ブランチ = 1機能
+- 実装 → 型チェック（`make typecheck`）→ lint（`make lint`）→ テスト（`make test_run`）
+- `.gitmessage` に従いコミット（日本語統一・絵文字）
+
+## PR 規約
+
+- タイトル: 対象機能を明記（例: `[Feature] ユーザー一覧画面の実装`）
+- **1PR = 1論理変更**
+- 本文: 変更概要 / スコープ外 / 動作確認（スクショ必須） / テスト結果 / チェックリスト

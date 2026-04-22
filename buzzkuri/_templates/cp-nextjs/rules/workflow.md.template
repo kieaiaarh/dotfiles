@@ -1,0 +1,25 @@
+---
+paths:
+  - "**/*"
+---
+
+# 開発ワークフロー・PR 規約
+
+## Make コマンド（必ずこれを使う）
+- 開発サーバー: `make dev`
+- ビルド: `make build`
+- Lint: `make lint`
+- 型チェック: `make typecheck`
+- テスト: `make test_run`
+- npm ci: `make npm_ci`
+
+## ワークフロー
+- 1ブランチ = 1機能
+- 実装 → `make typecheck` → `make lint` → `make test_run`
+- `.gitmessage` に従う（日本語統一・絵文字）
+- コメント・ログもすべて日本語
+
+## PR の粒度
+- **1PR = 1論理変更**。無関係なリファクタを混ぜない
+- PR タイトル例: `[Feature] ユーザー一覧画面の実装`
+- 本文: 変更概要 / スコープ外 / 動作確認（スクショ必須） / テスト結果 / チェックリスト
