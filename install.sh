@@ -122,10 +122,9 @@ for i in "${!REPO_PATHS[@]}"; do
   env_template="$DOTFILES_DIR/buzzkuri/_templates/$template/.env.template"
   env_file="$DOTFILES_DIR/buzzkuri/_templates/$template/.env.local"
   if [ -f "$env_template" ] && [ ! -f "$env_file" ]; then
-    echo "⚠️  env ファイルなし（スキップ）: $repo  [テンプレート: $template]"
-    echo "    → cp $env_template $env_file"
-    echo "    → 編集後に: bash $DOTFILES_DIR/scripts/sync-rules-to-project.sh $template $repo $env_file"
-    continue
+    cp "$env_template" "$env_file"
+    echo "env ファイルを自動作成しました（テンプレートのデフォルト値を使用）: $env_file"
+    echo "    → 必要に応じて値を編集してください"
   fi
 
   echo "同期中: $repo  [テンプレート: $template]"
