@@ -84,11 +84,15 @@ for i in "${!REPO_PATHS[@]}"; do
   exclude_file="$repo/.git/info/exclude"
   updated=0
   for pattern in "${EXCLUDE_PATTERNS[@]}"; do
-    if ! grep -qF "$pattern" "$exclude_file" 2>/dev/null; then
+    if ! grep -qxF "$pattern" "$exclude_file" 2>/dev/null; then
       echo "$pattern" >> "$exclude_file"
       updated=1
     fi
   done
+  # 旧パターンの除去（.claude/ があれば .claude/rules/ は冗長）
+  if grep -qxF ".claude/" "$exclude_file" 2>/dev/null; then
+    sed -i.bak '/^\.claude\/rules\/$/d' "$exclude_file" && rm -f "${exclude_file}.bak"
+  fi
 
   if [ "$updated" -eq 1 ]; then
     echo "除外設定を追加: $repo"
