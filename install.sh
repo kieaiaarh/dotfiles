@@ -71,7 +71,7 @@ while IFS= read -r line; do
   REPO_TEMPLATES+=("$template_type")
 done < "$REPOS_FILE"
 
-EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/rules/")
+EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/")
 
 echo "--- .git/info/exclude 設定 ---"
 for i in "${!REPO_PATHS[@]}"; do
