@@ -39,17 +39,25 @@ echo ""
 echo "=== プロジェクトリポの .git/info/exclude 設定 ==="
 
 REPOS_FILE="$DOTFILES_DIR/repos.local"
+REPOS_TEMPLATE="$DOTFILES_DIR/repos.template"
 if [ ! -f "$REPOS_FILE" ]; then
-  echo "repos.local が見つかりません。repos.template をコピーして作成してください:"
-  echo "  cp $DOTFILES_DIR/repos.template $DOTFILES_DIR/repos.local"
-  echo "スキップします。"
+  echo "repos.local が見つかりません。repos.template からコピーして作成します。"
+  cp "$REPOS_TEMPLATE" "$REPOS_FILE"
+  echo "作成しました: repos.local"
+elif ! diff -q "$REPOS_TEMPLATE" "$REPOS_FILE" > /dev/null 2>&1; then
+  echo "repos.local と repos.template に差分があります:"
+  echo "  (- が repos.template 側、+ が repos.local 側)"
   echo ""
-  echo "=== 手動対応が必要なもの ==="
-  echo "1. ~/.claude.json: ai/claude/claude.json.template を参考にトークンを設定"
-  echo "   (claude login で再認証すれば自動生成されます)"
+  diff -u "$REPOS_TEMPLATE" "$REPOS_FILE" || true
   echo ""
-  echo "完了！"
-  exit 0
+  printf "repos.template で上書きしますか？ [y/N]: "
+  read -r answer
+  if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+    cp "$REPOS_TEMPLATE" "$REPOS_FILE"
+    echo "上書きしました: repos.local"
+  else
+    echo "そのまま続行します。"
+  fi
 fi
 
 REPO_PATHS=()
