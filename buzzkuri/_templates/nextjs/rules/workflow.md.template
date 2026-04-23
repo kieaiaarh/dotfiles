@@ -1,29 +1,21 @@
----
-description: 開発ワークフロー・PR規約（全ファイルに適用）
----
+# 開発ワークフロー・PR 規約
 
-# 開発ワークフロー・PR規約
+## Make コマンド（必ずこれを使う）
+- 開発サーバー: `make dev`
+- ビルド: `make build`
+- Lint: `make lint`
+- 型チェック: `make typecheck`
+- テスト: `make test`
 
-## コマンド（必ずこれを使う）
-
-- 開発サーバー: `make dev` または `npm run dev`
-- 型チェック: `npx tsc --noEmit`
-- Lint: `npm run lint`
-- テスト: `npm run test`
-- ビルド: `npm run build`
-
-## PRの粒度（必須）
-
+## PR の粒度（必須）
 - **1PR = 1論理変更**を原則とする。無関係なリファクタ・別タスクを混ぜない
 
 ## コミット・PR
-
 - `.gitmessage` に従うこと（日本語統一・絵文字を適切に使う）
-- PRタイトル例: `[Feature] ユーザー一覧画面の実装`
-- PR本文必須項目: 変更概要 / スコープ外 / 動作確認（スクショ必須） / 新規編集テスト一覧
+- PR タイトル例: `[Feature] ユーザー一覧画面の実装`
+- PR 本文必須項目: 変更概要 / スコープ外 / 動作確認（スクショ必須） / 新規編集テスト一覧
 
 ## DoD
-
-- `tsc --noEmit` が通ること
-- ESLint エラーなし
+- `make typecheck` が通ること
+- `make lint` エラーなし
 - 省略語なし命名

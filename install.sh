@@ -39,17 +39,25 @@ echo ""
 echo "=== プロジェクトリポの .git/info/exclude 設定 ==="
 
 REPOS_FILE="$DOTFILES_DIR/repos.local"
+REPOS_TEMPLATE="$DOTFILES_DIR/repos.template"
 if [ ! -f "$REPOS_FILE" ]; then
-  echo "repos.local が見つかりません。repos.template をコピーして作成してください:"
-  echo "  cp $DOTFILES_DIR/repos.template $DOTFILES_DIR/repos.local"
-  echo "スキップします。"
+  echo "repos.local が見つかりません。repos.template からコピーして作成します。"
+  cp "$REPOS_TEMPLATE" "$REPOS_FILE"
+  echo "作成しました: repos.local"
+elif ! diff -q "$REPOS_TEMPLATE" "$REPOS_FILE" > /dev/null 2>&1; then
+  echo "repos.local と repos.template に差分があります:"
+  echo "  (- が repos.template 側、+ が repos.local 側)"
   echo ""
-  echo "=== 手動対応が必要なもの ==="
-  echo "1. ~/.claude.json: ai/claude/claude.json.template を参考にトークンを設定"
-  echo "   (claude login で再認証すれば自動生成されます)"
+  diff -u "$REPOS_TEMPLATE" "$REPOS_FILE" || true
   echo ""
-  echo "完了！"
-  exit 0
+  printf "repos.template で上書きしますか？ [y/N]: "
+  read -r answer
+  if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+    cp "$REPOS_TEMPLATE" "$REPOS_FILE"
+    echo "上書きしました: repos.local"
+  else
+    echo "そのまま続行します。"
+  fi
 fi
 
 REPO_PATHS=()
@@ -63,7 +71,7 @@ while IFS= read -r line; do
   REPO_TEMPLATES+=("$template_type")
 done < "$REPOS_FILE"
 
-EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/rules/")
+EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/")
 
 echo "--- .git/info/exclude 設定 ---"
 for i in "${!REPO_PATHS[@]}"; do
@@ -76,11 +84,15 @@ for i in "${!REPO_PATHS[@]}"; do
   exclude_file="$repo/.git/info/exclude"
   updated=0
   for pattern in "${EXCLUDE_PATTERNS[@]}"; do
-    if ! grep -qF "$pattern" "$exclude_file" 2>/dev/null; then
+    if ! grep -qxF "$pattern" "$exclude_file" 2>/dev/null; then
       echo "$pattern" >> "$exclude_file"
       updated=1
     fi
   done
+  # 旧パターンの除去（.claude/ があれば .claude/rules/ は冗長）
+  if grep -qxF ".claude/" "$exclude_file" 2>/dev/null; then
+    sed -i.bak '/^\.claude\/rules\/$/d' "$exclude_file" && rm -f "${exclude_file}.bak"
+  fi
 
   if [ "$updated" -eq 1 ]; then
     echo "除外設定を追加: $repo"

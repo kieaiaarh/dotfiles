@@ -38,16 +38,21 @@ if [ -n "$ENV_FILE" ] && [ ! -f "$ENV_FILE" ]; then
   exit 1
 fi
 
+# リポパスから PROJECT_NAME を自動生成（例: ~/work/buzzkuri/backend → buzzkuri/backend）
+AUTO_PROJECT_NAME=$(echo "$PROJECT_PATH" | sed 's|.*/work/||')
+
 # プレースホルダーを置換する関数（bash 3.x対応）
 apply_env() {
   local file="$1"
-  [ -z "$ENV_FILE" ] && return
-  [ ! -f "$ENV_FILE" ] && return
-  while IFS='=' read -r key value; do
-    [[ "$key" =~ ^#.*$ ]] && continue
-    [ -z "$key" ] && continue
-    sed -i.bak "s|{{${key}}}|${value}|g" "$file" && rm -f "${file}.bak"
-  done < "$ENV_FILE"
+  if [ -n "$ENV_FILE" ] && [ -f "$ENV_FILE" ]; then
+    while IFS='=' read -r key value; do
+      [[ "$key" =~ ^#.*$ ]] && continue
+      [ -z "$key" ] && continue
+      sed -i.bak "s|{{${key}}}|${value}|g" "$file" && rm -f "${file}.bak"
+    done < "$ENV_FILE"
+  fi
+  # PROJECT_NAME が未置換なら自動生成値で置換
+  sed -i.bak "s|{{PROJECT_NAME}}|${AUTO_PROJECT_NAME}|g" "$file" && rm -f "${file}.bak"
 }
 
 [ -n "$ENV_FILE" ] && echo "envファイルを読み込みます: $ENV_FILE"
@@ -119,19 +124,23 @@ else
   tmp_file=$(mktemp)
   cp "$CLAUDE_TEMPLATE" "$tmp_file"
   apply_env "$tmp_file"
-  echo "CLAUDE.md が既存のため差分を表示します:"
-  echo "  (- がテンプレート側、+ が既存ファイル側)"
-  echo ""
-  diff -u "$tmp_file" "$PROJECT_CLAUDE" || true
-  echo ""
-  printf "テンプレートで上書きしますか？ [y/N]: "
-  read -r answer
-  if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
-    cp "$tmp_file" "$PROJECT_CLAUDE"
-    echo "上書きしました: CLAUDE.md"
-    UPDATED=$((UPDATED + 1))
+  if ! diff -q "$tmp_file" "$PROJECT_CLAUDE" > /dev/null 2>&1; then
+    echo "差分あり: CLAUDE.md"
+    echo "  (- がテンプレート側、+ が既存ファイル側)"
+    echo ""
+    diff -u "$tmp_file" "$PROJECT_CLAUDE" || true
+    echo ""
+    printf "テンプレートで上書きしますか？ [y/N]: "
+    read -r answer
+    if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+      cp "$tmp_file" "$PROJECT_CLAUDE"
+      echo "上書きしました: CLAUDE.md"
+      UPDATED=$((UPDATED + 1))
+    else
+      echo "スキップ: CLAUDE.md"
+    fi
   else
-    echo "スキップ: CLAUDE.md（手動でマージしてください）"
+    echo "変更なし: CLAUDE.md"
   fi
   rm -f "$tmp_file"
 fi

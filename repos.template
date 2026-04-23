@@ -14,13 +14,18 @@
 ~/work/buzzkuri/compliance_admin nextjs
 ~/work/buzzkuri/internal_lambdas serverless
 ~/work/buzzkuri/account nextjs
-~/work/buzzkuri/buzzkuri-frontend nextjs
+~/work/buzzkuri/buzzkuri-frontend nextjs  # Next.js 10 / TS 4 / Jest。配布後に手動調整が必要（将来 nextjs-legacy テンプレート化）
 ~/work/buzzkuri/compliance nextjs
 ~/work/buzzkuri/compliance_top static
 ~/work/buzzkuri/partner nextjs
-~/work/buzzkuri/portal nextjs
+~/work/buzzkuri/portal nextjs  # Makefile なし・Docker なし。配布後に CLAUDE.md / workflow.md を手動調整
+~/work/buzzkuri/admins nextjs
+~/work/buzzkuri/engagement_solution nextjs
+~/work/buzzkuri/engagement_survey nextjs
 
 # compliance-police
 ~/work/compliance-police/backend cp-rails
 ~/work/compliance-police/frontend cp-nextjs
 ~/work/compliance-police/infra cp-infra-cdk
+~/work/compliance-police/compliance static  # 最小限の静的SPA。cp-nextjs は過剰
+~/work/compliance-police/compliance_top static
