@@ -39,24 +39,19 @@ AWS インフラを管理するリポジトリ。
 
 ---
 
-## CDK deploy 実行前の必須チェック（最重要）
+## CDK デプロイ前の必須チェック
 
-`cdk deploy` の前に**必ず**対象スタックの CF 状態を確認すること。
-確認せずに再デプロイすると、ロールバック時に既存リソースが削除される危険がある。
+`cdk deploy` / `cdk destroy` / `aws cloudformation delete-stack` を実行する前に、
+**`cdk-deploy-preflight` スキルを必ず呼び出すこと**。
 
-```bash
-# 状態確認（必須）
-aws cloudformation describe-stacks \
-  --stack-name <StackName> \
-  --query 'Stacks[0].StackStatus' --output text
+スキルが提供するチェック:
+1. CF スタック状態確認（`ROLLBACK_COMPLETE` / `*_FAILED` 検出時はブロック）
+2. 孤立リソース確認（CDK 管理外で残存しているリソースとの名前衝突防止）
+3. `cdk diff` レビュー
+4. ユーザー承認
 
-# ROLLBACK_COMPLETE / *_FAILED が返ったら即停止 → ユーザーに報告
-```
-
-**NG 状態一覧（検出したら即停止）:**
-- `ROLLBACK_COMPLETE`: 再デプロイで既存リソース削除リスク → `cdk import` 検討
-- `UPDATE_ROLLBACK_FAILED` / `CREATE_FAILED` / `UPDATE_FAILED`: 原因確認が先
-- `UPDATE_ROLLBACK_COMPLETE`: 直前のロールバック原因を確認してから再デプロイ
+スキル未使用で再デプロイした結果、稼働中の CloudFront / Secrets Manager インフラを破壊した実績あり。
+hook（`.claude/hooks/check-destructive-bash.sh`）は最終防衛ラインのみで、能動的な事前チェックはスキルの役割。
 
 ---
 
