@@ -58,6 +58,17 @@ aws cloudformation describe-stacks \
 - `UPDATE_ROLLBACK_FAILED` / `CREATE_FAILED` / `UPDATE_FAILED`: 原因確認が先
 - `UPDATE_ROLLBACK_COMPLETE`: 直前のロールバック原因を確認してから再デプロイ
 
+**ROLLBACK_COMPLETE スタックを削除する場合の追加手順:**
+削除前に `list-stack-resources` で孤立リソースを洗い出すこと。削除後に `cdk deploy` すると、CF 管理外に残ったリソース（OAC・CF Distribution・S3 等）と名前衝突して `AlreadyExists` エラーになる。
+
+```bash
+aws cloudformation list-stack-resources \
+  --stack-name <StackName> \
+  --query 'StackResourceSummaries[*].{Status:ResourceStatus,Physical:PhysicalResourceId,Type:ResourceType}' \
+  --output table
+# DELETE_SKIPPED のリソースは AWS 上に残存している → 手動削除か cdk import が必要
+```
+
 ---
 
 ## 長時間コマンドの実行前確認原則

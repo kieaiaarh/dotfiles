@@ -77,7 +77,22 @@ fi
 
 # === CloudFormation スタック削除 ===
 if echo "$COMMAND" | grep -qE 'aws\s+cloudformation\s+delete-stack'; then
+  STACK=$(echo "$COMMAND" | grep -oE '\-\-stack\-name\s+\S+' | awk '{print $2}' || true)
+  PROFILE_OPT2=""
+  if echo "$COMMAND" | grep -q -- '--profile'; then
+    PROF=$(echo "$COMMAND" | sed -n 's/.*--profile[= ]\([^ ]*\).*/\1/p' | head -1)
+    [ -n "$PROF" ] && PROFILE_OPT2="--profile $PROF"
+  fi
+
   echo "⚠️  CloudFormation スタック削除を検知しました: $COMMAND" >&2
+  echo "" >&2
+  echo "   削除前に孤立リソースを確認してください:" >&2
+  echo "   aws cloudformation list-stack-resources --stack-name ${STACK:-<StackName>} $PROFILE_OPT2 \\" >&2
+  echo "     --query 'StackResourceSummaries[*].{Status:ResourceStatus,Physical:PhysicalResourceId,Type:ResourceType}' --output table" >&2
+  echo "" >&2
+  echo "   DELETE_SKIPPED のリソースは AWS 上に残存しています。" >&2
+  echo "   cdk deploy で 'AlreadyExists' エラーになるため、削除前に手動削除か cdk import を検討すること。" >&2
+  echo "" >&2
   echo "   ユーザーの明示的な承認が必要です。" >&2
   exit 2
 fi

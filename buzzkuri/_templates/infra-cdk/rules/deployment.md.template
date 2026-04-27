@@ -45,6 +45,40 @@ aws cloudformation describe-stack-events --stack-name <StackName> \
 
 ---
 
+## ROLLBACK_COMPLETE スタック削除前の孤立リソース確認（必須）
+
+**`aws cloudformation delete-stack` を実行する前に、孤立リソースを洗い出すこと。**
+スタック削除後に `cdk deploy` すると、CF 管理外に残ったリソースと同名衝突し `AlreadyExists` エラーになる。
+
+```bash
+# スタックのリソース一覧（DELETE_SKIPPED / DELETE_COMPLETE 含む全件）
+aws cloudformation list-stack-resources \
+  --stack-name <StackName> \
+  --query 'StackResourceSummaries[*].{Status:ResourceStatus,Type:ResourceType,Physical:PhysicalResourceId}' \
+  --output table
+```
+
+`DELETE_SKIPPED` または物理 ID が残存しているリソースは AWS 上に残っている可能性がある。
+
+### 残存しやすいリソース種別
+
+| リソース種別 | 残存理由 |
+|---|---|
+| `AWS::S3::Bucket` | `RemovalPolicy: RETAIN` で削除スキップ |
+| `AWS::CloudFront::Distribution` | 無効化→削除に時間がかかる |
+| `AWS::CloudFront::OriginAccessControl` | Distribution 参照中は削除不可 |
+| `AWS::Lambda::Function`（edge） | us-east-1 に作成、参照中は削除不可 |
+| `AWS::SecretsManager::Secret` | `RemovalPolicy: RETAIN` で残存 |
+
+### 対処（優先順）
+
+1. `cdk import` で残存リソースを CDK 管理下に取り込んでから `cdk deploy`
+2. 残存リソースを依存関係の逆順で手動削除してから `cdk deploy`
+   - CloudFront Distribution → OAC → S3 の順
+3. 論理 ID 変更で名前衝突を回避（非推奨・CDK ドリフトが生じる）
+
+---
+
 ## 実行順序の原則
 
 必ず `build → synth → diff → deploy` の順で行う。diff を省略しない。
