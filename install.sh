@@ -19,6 +19,9 @@ link() {
   elif [ -f "$dst" ]; then
     echo "既存ファイルをバックアップ: $dst -> $dst.bak"
     mv "$dst" "$dst.bak"
+  elif [ -d "$dst" ]; then
+    echo "既存ディレクトリをバックアップ: $dst -> $dst.bak"
+    mv "$dst" "$dst.bak"
   fi
 
   ln -s "$src" "$dst"
@@ -34,6 +37,19 @@ link "$DOTFILES_DIR/ai/claude/CLAUDE.md"        "$CLAUDE_DIR/CLAUDE.md"
 link "$DOTFILES_DIR/ai/claude/settings.json"    "$CLAUDE_DIR/settings.json"
 link "$DOTFILES_DIR/ai/claude/mystatus.sh"      "$CLAUDE_DIR/mystatus.sh"
 link "$DOTFILES_DIR/ai/claude/commands/think.md" "$CLAUDE_DIR/commands/think.md"
+
+echo ""
+echo "=== Claude スキルのシンボリックリンク ==="
+SKILLS_SRC_DIR="$DOTFILES_DIR/ai/claude/skills"
+if [ -d "$SKILLS_SRC_DIR" ]; then
+  for skill_dir in "$SKILLS_SRC_DIR"/*/; do
+    [ -d "$skill_dir" ] || continue
+    skill_name="$(basename "$skill_dir")"
+    link "${skill_dir%/}" "$CLAUDE_DIR/skills/$skill_name"
+  done
+else
+  echo "スキルディレクトリが見つかりません（スキップ）: $SKILLS_SRC_DIR"
+fi
 
 echo ""
 echo "=== プロジェクトリポの .git/info/exclude 設定 ==="
