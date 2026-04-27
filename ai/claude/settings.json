@@ -25,7 +25,8 @@
     "static-analysis@trailofbits": true,
     "differential-review@trailofbits": true,
     "sharp-edges@trailofbits": true,
-    "playwright-skill@playwright-skill": true
+    "playwright-skill@playwright-skill": true,
+    "deploy-on-aws@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "planning-with-files": {
@@ -50,6 +51,12 @@
       "source": {
         "source": "git",
         "url": "https://github.com/lackeyjb/playwright-skill.git"
+      }
+    },
+    "agent-plugins-for-aws": {
+      "source": {
+        "source": "github",
+        "repo": "awslabs/agent-plugins"
       }
     }
   },
