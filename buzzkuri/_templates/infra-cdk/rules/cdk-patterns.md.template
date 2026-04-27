@@ -38,3 +38,12 @@ lib/stacks/
 
 - スタックのインスタンス化と `env`（account/region）の解決のみ行う
 - ビジネスロジックや設定値の計算は `lib/config/` に置く
+
+## RemovalPolicy の使い分け
+
+| スタックの性質 | S3 等データストアの RemovalPolicy | 理由 |
+|---|---|---|
+| 本番・ステージング環境 | `RETAIN` | 誤ってスタック削除してもデータを保護するため |
+| 技術検証・使い捨てスタック | `DESTROY` + `autoDeleteObjects: true` | 繰り返し作り直すため残骸が残ると再デプロイが失敗する |
+
+検証スタックに `RETAIN` を設定すると、スタック削除後もリソースが残り次回デプロイ時に "already exists" エラーになる。
