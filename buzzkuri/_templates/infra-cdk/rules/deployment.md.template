@@ -6,6 +6,45 @@ paths:
 
 # デプロイメント手順
 
+## デプロイ前の CF 状態確認（必須・最重要）
+
+**`cdk deploy` の前に必ず対象スタックの CloudFormation 状態を確認すること。**
+状態を確認せずにデプロイすると、孤立リソースの削除やインフラ破壊が起きる。
+
+```bash
+aws cloudformation describe-stacks \
+  --stack-name <StackName> \
+  --query 'Stacks[0].StackStatus' --output text
+```
+
+以下の状態を検出したら**即停止**し、ユーザーに報告して対処方針の承認を得ること。
+
+| 状態 | リスク | 対応 |
+|---|---|---|
+| `ROLLBACK_COMPLETE` | 再デプロイで既存リソースを削除する | `cdk import` または手動削除後に再デプロイ |
+| `CREATE_FAILED` / `UPDATE_FAILED` | 失敗変更セットが残存 | イベントログ確認 → 原因修正 → 再デプロイ |
+| `UPDATE_ROLLBACK_FAILED` | ロールバックも失敗 | Console から Continue Update Rollback を試みる |
+| `UPDATE_ROLLBACK_COMPLETE` | 直前のデプロイがロールバック済み | 差分と原因を確認してから再デプロイ |
+
+### 孤立リソースの確認
+
+```bash
+# スタックのリソース一覧
+aws cloudformation list-stack-resources --stack-name <StackName>
+
+# 失敗イベントの確認
+aws cloudformation describe-stack-events --stack-name <StackName> \
+  --query 'StackEvents[?contains(ResourceStatus, `FAILED`)]'
+```
+
+### 孤立リソースへの対応（優先順）
+
+1. `cdk import` で既存リソースを CDK 管理下に取り込む（推奨・データ保全）
+2. 既存リソースを手動削除してから `cdk deploy`
+3. CloudFormation Console から "Delete Stack" → 残存リソース確認 → 再デプロイ
+
+---
+
 ## 実行順序の原則
 
 必ず `build → synth → diff → deploy` の順で行う。diff を省略しない。

@@ -39,6 +39,27 @@ AWS インフラを管理するリポジトリ。
 
 ---
 
+## CDK deploy 実行前の必須チェック（最重要）
+
+`cdk deploy` の前に**必ず**対象スタックの CF 状態を確認すること。
+確認せずに再デプロイすると、ロールバック時に既存リソースが削除される危険がある。
+
+```bash
+# 状態確認（必須）
+aws cloudformation describe-stacks \
+  --stack-name <StackName> \
+  --query 'Stacks[0].StackStatus' --output text
+
+# ROLLBACK_COMPLETE / *_FAILED が返ったら即停止 → ユーザーに報告
+```
+
+**NG 状態一覧（検出したら即停止）:**
+- `ROLLBACK_COMPLETE`: 再デプロイで既存リソース削除リスク → `cdk import` 検討
+- `UPDATE_ROLLBACK_FAILED` / `CREATE_FAILED` / `UPDATE_FAILED`: 原因確認が先
+- `UPDATE_ROLLBACK_COMPLETE`: 直前のロールバック原因を確認してから再デプロイ
+
+---
+
 ## 長時間コマンドの実行前確認原則
 
 **「失敗するかもしれない」と感じたら、先に調査してから実行する。**
