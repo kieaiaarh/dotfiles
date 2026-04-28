@@ -60,6 +60,28 @@
       }
     }
   },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-shell-security.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-shell-security.sh"
+          }
+        ]
+      }
+    ]
+  },
   "sandbox": {
     "enabled": true,
     "enableWeakerNetworkIsolation": true

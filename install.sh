@@ -39,6 +39,20 @@ link "$DOTFILES_DIR/ai/claude/mystatus.sh"      "$CLAUDE_DIR/mystatus.sh"
 link "$DOTFILES_DIR/ai/claude/commands/think.md" "$CLAUDE_DIR/commands/think.md"
 
 echo ""
+echo "=== Claude フックのシンボリックリンク ==="
+HOOKS_SRC_DIR="$DOTFILES_DIR/ai/claude/hooks"
+if [ -d "$HOOKS_SRC_DIR" ]; then
+  mkdir -p "$CLAUDE_DIR/hooks"
+  for hook_file in "$HOOKS_SRC_DIR"/*.sh; do
+    [ -e "$hook_file" ] || continue
+    hook_name="$(basename "$hook_file")"
+    link "$hook_file" "$CLAUDE_DIR/hooks/$hook_name"
+  done
+else
+  echo "フックディレクトリが見つかりません（スキップ）: $HOOKS_SRC_DIR"
+fi
+
+echo ""
 echo "=== Claude スキルのシンボリックリンク ==="
 SKILLS_SRC_DIR="$DOTFILES_DIR/ai/claude/skills"
 if [ -d "$SKILLS_SRC_DIR" ]; then
