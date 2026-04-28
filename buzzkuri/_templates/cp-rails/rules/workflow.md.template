@@ -17,3 +17,8 @@
 - コメント・ログ・Rake タスクも日本語統一
 - PR タイトル例: `[API] GET /compliance/api/events`
 - PR 本文必須項目: 変更概要 / スコープ外 / 動作確認 / RSpec 一覧
+
+## 完了前の必須確認（PR・コミット前に必ず行う）
+- **新規スクリプト・機能の実装後は `superpowers:verification-before-completion` スキルを呼ぶ**
+- シェルスクリプト（`.sh`）を作成・編集した場合は `.claude/rules/shell.md` のセルフチェックリストを確認してから PR を出す
+- lint / test を実行して green を確認する（RuboCop / RSpec）
