@@ -48,7 +48,8 @@
     "differential-review@trailofbits": true,
     "sharp-edges@trailofbits": true,
     "playwright-skill@playwright-skill": true,
-    "deploy-on-aws@claude-plugins-official": true
+    "deploy-on-aws@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "planning-with-files": {
