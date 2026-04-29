@@ -31,6 +31,15 @@
             "command": "~/.claude/hooks/check-shell-security.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-bash-safety.sh"
+          }
+        ]
       }
     ]
   },
