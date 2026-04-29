@@ -221,6 +221,85 @@ if [ -d "$HOOKS_TEMPLATE_DIR" ]; then
   done
 fi
 
+# ── 5. .github/ （PR/Issue テンプレート） ──────────────────────────────────
+# stack 別 override があればそちらを優先、無ければ dotfiles ルートを使う
+GITHUB_TEMPLATE_SRC=""
+if [ -d "$TEMPLATE_DIR/.github" ]; then
+  GITHUB_TEMPLATE_SRC="$TEMPLATE_DIR/.github"
+  GITHUB_SRC_LABEL="stack 別 override"
+elif [ -d "$DOTFILES_DIR/.github" ]; then
+  GITHUB_TEMPLATE_SRC="$DOTFILES_DIR/.github"
+  GITHUB_SRC_LABEL="dotfiles ルート（共通）"
+fi
+
+if [ -n "$GITHUB_TEMPLATE_SRC" ]; then
+  echo ""
+  echo "--- .github/ ---"
+  echo "  ソース: $GITHUB_SRC_LABEL"
+  PROJECT_GITHUB_DIR="$PROJECT_PATH/.github"
+  mkdir -p "$PROJECT_GITHUB_DIR"
+
+  # PULL_REQUEST_TEMPLATE.md
+  src_pr="$GITHUB_TEMPLATE_SRC/PULL_REQUEST_TEMPLATE.md"
+  dst_pr="$PROJECT_GITHUB_DIR/PULL_REQUEST_TEMPLATE.md"
+  if [ -f "$src_pr" ]; then
+    if [ ! -f "$dst_pr" ]; then
+      cp "$src_pr" "$dst_pr"
+      echo "新規追加: .github/PULL_REQUEST_TEMPLATE.md"
+      UPDATED=$((UPDATED + 1))
+    elif ! diff -q "$src_pr" "$dst_pr" > /dev/null 2>&1; then
+      echo "差分あり: .github/PULL_REQUEST_TEMPLATE.md"
+      echo "  (- がテンプレート側、+ が既存ファイル側)"
+      echo ""
+      diff -u "$src_pr" "$dst_pr" || true
+      echo ""
+      printf "テンプレートで上書きしますか？ [y/N]: "
+      read -r answer
+      if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+        cp "$src_pr" "$dst_pr"
+        echo "上書きしました: .github/PULL_REQUEST_TEMPLATE.md"
+        UPDATED=$((UPDATED + 1))
+      else
+        echo "スキップ: .github/PULL_REQUEST_TEMPLATE.md"
+      fi
+    else
+      echo "変更なし: .github/PULL_REQUEST_TEMPLATE.md"
+    fi
+  fi
+
+  # ISSUE_TEMPLATE/*.md
+  src_issue_dir="$GITHUB_TEMPLATE_SRC/ISSUE_TEMPLATE"
+  dst_issue_dir="$PROJECT_GITHUB_DIR/ISSUE_TEMPLATE"
+  if [ -d "$src_issue_dir" ]; then
+    mkdir -p "$dst_issue_dir"
+    for issue_template in "$src_issue_dir"/*.md; do
+      [ -e "$issue_template" ] || continue
+      filename=$(basename "$issue_template")
+      dst_file="$dst_issue_dir/$filename"
+      if [ ! -f "$dst_file" ]; then
+        cp "$issue_template" "$dst_file"
+        echo "新規追加: .github/ISSUE_TEMPLATE/$filename"
+        UPDATED=$((UPDATED + 1))
+      elif ! diff -q "$issue_template" "$dst_file" > /dev/null 2>&1; then
+        echo "差分あり: .github/ISSUE_TEMPLATE/$filename"
+        diff -u "$issue_template" "$dst_file" || true
+        echo ""
+        printf "上書きしますか？ [y/N]: "
+        read -r answer
+        if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+          cp "$issue_template" "$dst_file"
+          echo "上書きしました: .github/ISSUE_TEMPLATE/$filename"
+          UPDATED=$((UPDATED + 1))
+        else
+          echo "スキップ: .github/ISSUE_TEMPLATE/$filename"
+        fi
+      else
+        echo "変更なし: .github/ISSUE_TEMPLATE/$filename"
+      fi
+    done
+  fi
+fi
+
 echo ""
 if [ "$UPDATED" -gt 0 ]; then
   echo "完了: $UPDATED ファイルを更新しました。"
