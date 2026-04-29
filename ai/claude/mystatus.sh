@@ -3,8 +3,24 @@ input=$(cat)
 
 # jqで各値を取得
 PCT=$(echo "$input" | jq -r '(.context_window.current_usage | (.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens)) * 100 / .context_window.context_window_size | floor')
+TOK_USED=$(echo "$input" | jq -r '.context_window.current_usage | (.input_tokens + .cache_creation_input_tokens + .cache_read_input_tokens)')
+TOK_CTX=$(echo "$input" | jq -r '.context_window.context_window_size')
 MODEL=$(echo "$input" | jq -r '.model.display_name')
 DIR=$(echo "$input" | jq -r '.workspace.current_dir')
+
+# トークン数を 1000 単位で短縮表示（例: 80000 → 80k, 1500000 → 1.5M）
+short_num() {
+  local n="$1"
+  if [ "$n" -ge 1000000 ]; then
+    awk -v n="$n" 'BEGIN { printf "%.1fM", n/1000000 }'
+  elif [ "$n" -ge 1000 ]; then
+    awk -v n="$n" 'BEGIN { printf "%dk", n/1000 }'
+  else
+    echo "$n"
+  fi
+}
+TOK_USED_FMT=$(short_num "$TOK_USED")
+TOK_CTX_FMT=$(short_num "$TOK_CTX")
 
 # 色の定義
 RED='\033[31m'
@@ -68,4 +84,4 @@ FILLED=$((PCT / 10)); EMPTY=$((10 - FILLED))
 BAR=$(printf "%${FILLED}s" | tr ' ' '=')$(printf "%${EMPTY}s" | tr ' ' '-')
 
 # 最終出力 (絵文字を削除し、角括弧や色で区別)
-echo -e "${CYAN}[dir] ${SHORT_DIR}${RESET}${GIT_STR} | ${MAGENTA}[model] ${MODEL}${RESET} | ${COLOR}[ctx] [${BAR}] ${PCT}%${RESET}"
+echo -e "${CYAN}[dir] ${SHORT_DIR}${RESET}${GIT_STR} | ${MAGENTA}[model] ${MODEL}${RESET} | ${COLOR}[ctx] [${BAR}] ${PCT}% (${TOK_USED_FMT}/${TOK_CTX_FMT})${RESET}"
