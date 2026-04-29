@@ -33,10 +33,23 @@ link "$DOTFILES_DIR/.tmux.conf" "$HOME/.tmux.conf"
 
 echo ""
 echo "=== Claude グローバル設定のシンボリックリンク ==="
-link "$DOTFILES_DIR/ai/claude/CLAUDE.md"        "$CLAUDE_DIR/CLAUDE.md"
-link "$DOTFILES_DIR/ai/claude/settings.json"    "$CLAUDE_DIR/settings.json"
-link "$DOTFILES_DIR/ai/claude/mystatus.sh"      "$CLAUDE_DIR/mystatus.sh"
-link "$DOTFILES_DIR/ai/claude/commands/think.md" "$CLAUDE_DIR/commands/think.md"
+link "$DOTFILES_DIR/ai/claude/CLAUDE.md"     "$CLAUDE_DIR/CLAUDE.md"
+link "$DOTFILES_DIR/ai/claude/settings.json" "$CLAUDE_DIR/settings.json"
+link "$DOTFILES_DIR/ai/claude/mystatus.sh"   "$CLAUDE_DIR/mystatus.sh"
+
+echo ""
+echo "=== Claude カスタムコマンドのシンボリックリンク ==="
+COMMANDS_SRC_DIR="$DOTFILES_DIR/ai/claude/commands"
+if [ -d "$COMMANDS_SRC_DIR" ]; then
+  mkdir -p "$CLAUDE_DIR/commands"
+  for cmd_file in "$COMMANDS_SRC_DIR"/*.md; do
+    [ -e "$cmd_file" ] || continue
+    cmd_name="$(basename "$cmd_file")"
+    link "$cmd_file" "$CLAUDE_DIR/commands/$cmd_name"
+  done
+else
+  echo "コマンドディレクトリが見つかりません（スキップ）: $COMMANDS_SRC_DIR"
+fi
 
 echo ""
 echo "=== Claude フックのシンボリックリンク ==="
