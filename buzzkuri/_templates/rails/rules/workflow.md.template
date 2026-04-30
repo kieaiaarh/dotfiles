@@ -4,6 +4,13 @@ description: 開発ワークフロー・PR規約（全ファイルに適用）
 
 # 開発ワークフロー・PR規約
 
+## ブランチ運用（絶対ルール）
+
+- **実装開始前に必ず `git branch --show-current` でブランチを確認する**
+- `master` ブランチのままコード変更・ファイル作成を一切行わない
+- `master` にいた場合は `git checkout -b feature/<topic>` でブランチを切ってから作業を始める
+- このチェックはいかなる理由・状況でも省略しない
+
 ## Makeコマンド（必ずこれを使う）
 - RuboCop: `make rubocop_exec TARGET='app/path'` / `make rubocop_run TARGET='app/path'`
 - RSpec: `make rspec_exec FILES='spec/path'` / `make rspec_run FILES='spec/path'`

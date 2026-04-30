@@ -15,7 +15,10 @@ paths:
 
 ## 命名
 - メソッド名は「形容詞＋名詞」で意図を明示（例: `masked_content`, `expired_tokens`）
-- 省略語禁止（例: `ms/*` は不可、`microsoft/*` を使う）
+- **省略語・略称は変数名・メソッド名・ブロック引数・ディレクトリ名すべてで禁止**
+  - NG: `ev` → OK: `event` / NG: `biz` → OK: `business` / NG: `req` → OK: `request`
+  - NG: `|b|` → OK: `|slack_block|` / NG: `|e|` → OK: `|event|`
+  - NG: `ms/*` → OK: `microsoft/*`
 - `self.table_name =` の明示的定義は不要。Railsの命名規則で解決できるようにすること。
 
 ## Ruby {{RUBY_VERSION}}記法

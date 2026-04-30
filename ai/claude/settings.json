@@ -11,8 +11,41 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "sonnet",
+  "model": "opus",
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/inject-current-state.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-typos.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-class-length.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-abbreviations.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-frozen-string-literal.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Write",
@@ -24,6 +57,10 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/check-claude-direct-write.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-ar-migration.sh"
           }
         ]
       },
@@ -37,6 +74,10 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/check-claude-direct-write.sh"
+          },
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/check-ar-migration.sh"
           }
         ]
       },
@@ -103,5 +144,7 @@
   "sandbox": {
     "enabled": true,
     "enableWeakerNetworkIsolation": true
-  }
+  },
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
 }
