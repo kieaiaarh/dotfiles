@@ -18,14 +18,14 @@ git branch --show-current
   git checkout -b feature/<topic>
   ```
 
-## ステップ 1: 関連ルールの読み込み
+## ステップ 1: ルールの読み込み（**階層全部**）
 
-- プロジェクトルートの `CLAUDE.md` を **Read ツールで読む**
-- 編集対象ファイルパスにマッチする `.claude/rules/*.md` を読む
-  - `app/**` を編集 → `models-services.md`, `ruby-style.md`
-  - `spec/**` を編集 → `rspec.md`, `ruby-style.md`
-  - `*.sh` を編集 → `shell.md`
-  - 全般: `workflow.md`
+Claude Code は **working directory から root まで** すべての `CLAUDE.md` を walk up して自動読込する。ただし以下を必ず確認：
+
+1. **直近の編集対象ディレクトリから順に上位の `CLAUDE.md` 全部** が context にあるか確認する。
+   - サブディレクトリで作業する場合、そのサブディレクトリ独自の `CLAUDE.md` が遅延ロードされていない可能性がある → `find . -maxdepth 4 -name "CLAUDE.md"` で存在確認し、必要なら Read する。
+2. **path-scoped rules**（`.claude/rules/*.md`）は編集対象パスに応じて auto-load される。確認するなら `ls .claude/rules/` で一覧。
+3. **session 圧縮（compaction）後** は context から CLAUDE.md が消えている可能性が高い。直近の context に CLAUDE.md / rules の内容が見当たらなければ、明示的に Read し直す。
 
 ## ステップ 2: 設計方針の提示と承認取得
 
@@ -37,22 +37,24 @@ git branch --show-current
 
 ユーザーの承認を得てから実装を開始する。
 
-## ステップ 3: TDD の検討
+## ステップ 3: TDD と atomic commits の検討
 
 新規機能・バグ修正は **TDD** に従う:
-1. 失敗するテストを書く
+1. 失敗するテストを書く → コミット
 2. 失敗を確認する（必ず実行する）
-3. 最小実装でグリーンにする
-4. リファクタする
+3. 最小実装でグリーンにする → コミット
+4. リファクタする → コミット
+
+**1コミット1目的（atomic）**を守る。こまめなコミットで切り戻し単位を小さく保つ。
 
 ## チェックリスト
 
 実装開始前に**全項目**を満たすこと:
 
 - [ ] `git branch --show-current` を実行し、master/main でないことを確認した
-- [ ] プロジェクトの `CLAUDE.md` を Read ツールで読んだ
-- [ ] 編集対象パスに該当する `.claude/rules/*.md` を読んだ
+- [ ] working directory ＋親ディレクトリ ＋（サブで作業する場合は）当該サブディレクトリの `CLAUDE.md` が context にあることを確認した
+- [ ] 編集対象パスに該当する `.claude/rules/*.md` が context にある（または明示的に Read した）
 - [ ] 設計方針をユーザーに提示し、承認を得た
-- [ ] TDD が必要な場合、失敗テストから始める計画を立てた
+- [ ] TDD と atomic commits の実施計画を立てた
 
 **1つでも未達なら実装を始めてはいけない。**

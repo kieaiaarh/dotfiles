@@ -1,7 +1,7 @@
 # AGENTS ガイド（{{PROJECT_NAME}}）
 
 **優先度**: 直接の指示 > 本ドキュメント > 既存コード慣習
-詳細は `.claude/rules/{workflow,ruby-style,rspec,models-services,controllers,views,db,shell}.md`
+詳細は `.claude/rules/{workflow,ruby-style,rspec,models-services,controllers,views,db,shell}.md`（編集対象に応じて auto-load）
 
 ## 絶対ルール（違反したら停止）
 
@@ -12,11 +12,12 @@
 - **クラス長**: **Class ≤ 100行 / Method ≲ 30行**（厳守、超えたら責務分割）
 - **省略語禁止**: 変数・メソッド・ブロック引数・ディレクトリ・ファイル名すべて
 - **直接実行禁止**: docker compose / bundle exec / bin/rails / bin/rspec の直接実行は中断して指示を仰ぐ（Make ターゲット優先）
+- **コミット**: 1コミット1目的（atomic）。こまめにコミットして切り戻し単位を小さく保つ
 - **完了前**: コミット・PR前に `superpowers:verification-before-completion` skill を呼ぶ
 
 ## 運用モード
 
-- **readonly**: 設計・調査のみ。コード変更なし。ネットワーク禁止。Sandbox=`workspace-write`。
+- **readonly**: 設計・調査のみ。コード変更なし。ネットワーク禁止。
 - **unattended**: 短時間の全自動（検証環境のみ）。**外部通信・破壊的 DB 操作は禁止**。開始前に必ずブランチ作成。
 
 ## 技術スタック
@@ -25,65 +26,21 @@ Ruby `{{RUBY_VERSION}}` / Rails `{{RAILS_VERSION}}` / {{DB_ENGINE}}（{{DB_SCHEM
 
 I18n: `ja` / TZ: `Asia/Tokyo` / RuboCop 設定（`.rubocop.yml`）準拠 / Docker コンテナ前提
 
-コマンド実行は必ず最初に **README と Makefile を確認**し、Make ターゲットを最優先で使うこと。
-
-## Make早見表（必須）
-
-- RuboCop: `make rubocop_exec TARGET='app/path'` / `make rubocop_run`
-- RSpec: `make rspec_exec FILES='spec/path'` / `make rspec_run`
-- DB起動: `make db_up_d` / Ridgepole適用: `make ridgepole_apply` / DB構築: `make db_setup`
-- bundle: `make bundle_install_exec`（起動中）/ `make bundle_install`（新規）
-- コンソール: `make rails_c` / Rake: `make rake_exec TASK=...`
-
-sandbox 制約で失敗した場合: ① 実行 Make ターゲット ② sandbox 制約で失敗 ③ ユーザー実行コマンド を分けて報告すること。
-
-ローカル検証手順を書くときは、**「エージェントが実行した手順」と「ユーザーに依頼するローカル手順」を混在させない**こと。
-
 ## ディレクトリ責務（詳細は path-scoped rules で auto-load）
 
-- `app/controllers/*`: **交通整理のみ**（業務ロジック禁止）/ 継承元コントローラ継承 / API・管理・業務で名前空間化（→ `controllers.md`）
-- `app/models/*`: ActiveRecord + Concerns（→ `models-services.md`）
-- `app/services/*`: `BaseService` 継承、公開は `#execute` のみ（→ `models-services.md`）
-- `app/policies/*`: Pundit（Controller に認可ロジックを書かない）（→ `models-services.md`）
-- `app/jobs/*`: ActiveJob（`queue_as` 必須）（→ `models-services.md`）
-- `app/views/*`: **Jbuilder必須・locals 渡し**（インスタンス変数の過度な多用禁止）（→ `views.md`）
-- `spec/requests/*`: **Controller 単位のファイル**（action 別に分割しない）（→ `rspec.md`）
-- `db/*`: {{DB_SCHEMA_TOOL}} 経由のみ、AR migration 禁止（→ `db.md`）
+- `app/controllers/*` — 交通整理のみ・継承元継承（→ `controllers.md`）
+- `app/models/*` `app/services/*` `app/policies/*` `app/jobs/*` — （→ `models-services.md`）
+- `app/views/*` — **Jbuilder必須・locals 渡し**（→ `views.md`）
+- `spec/requests/*` — **Controller 単位のファイル**（→ `rspec.md`）
+- `db/*` — Ridgepole 経由のみ、AR migration 禁止（→ `db.md`）
 - ルーティングは **フラット**（ネスト禁止）
 
-## Ruby {{RUBY_VERSION}} 記法
-
-- ハッシュ省略 `{ aa: }` を積極活用
-- **endレス定義** を積極活用（例: `def name = @name.strip`）
-- `# frozen_string_literal: true / false` は **書かない**（既存にあれば削除）
-- エラー処理は専用メソッドに分離（メインロジックに rescue 混在禁止）
-
-## DoD（Definition of Done）
-
-- 新規/編集 RSpec **green 必須**（未編集の既存失敗はスコープ外）
-- Controller / Model / Service は **testable** に設計
-- 宣言的で **Readable** なコーディングを徹底
-- OOP 原則（SRP/DIP）
-
-## ワークフロー
-
-1. ブランチ確認 → 実装方針提示 → 承認取得
-2. 実装 → Jbuilder → `make rubocop_exec` → `make rspec_exec`
-3. **1ブランチ=1機能 / 1PR=1論理変更**（無関係なリファクタを混ぜない）
-4. コミットメッセージ: `.gitmessage` 準拠（日本語・絵文字）
-5. コメント・ログ・RSpec describe/context・rake タスクもすべて日本語
-
-## PR規約（テンプレ準拠）
-
-- タイトル: `[API] GET /api/v1/events` 形式
-- 本文順序: **概要(なぜ) / 修正内容(利用者視点) / やらないこと / 影響範囲 / 動作確認 / 備考**
-- 「概要」「修正内容」に **実装詳細を書かない**（→「動作確認」へ）
-- チェックリスト: 新規/編集 RSpec green / Jbuilder locals 渡し / 省略語なし命名
+ワークフロー・コミット規約・PR規約・DoD は `workflow.md`、Ruby記法は `ruby-style.md` で常時ロードされます。
 
 ## Guardrails
 
 - セキュリティ: Brakeman を CI 実行 / CORS は環境別 / 秘密情報は Credentials 管理
-- `rubocop:disable` のインライン付与は **`make rubocop_exec` で同一指摘が再現した場合のみ許可**（「念のため」禁止）
+- `rubocop:disable` のインライン付与は `make rubocop_exec` で同一指摘が再現した場合のみ許可
 - config/routes.rb は **最小差分** で追加（巨大ファイルなので）
 
 このガイドにない判断は、既存コードの慣習と CI 設定（.github/workflows）を最優先に合わせること。

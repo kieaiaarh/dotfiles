@@ -24,3 +24,9 @@ paths:
 ## Ruby {{RUBY_VERSION}}記法
 - ハッシュ省略 `{ aa: }` を積極活用
 - endレス定義を積極活用（例: `def granted?(org) = org.consented_at && ...`）
+
+## 設計原則
+- **Class ≤ 100行 / Method ≲ 30行**（厳守、超えたら責務分割）
+- OOP 原則（SRP/DIP）に沿った設計
+- Controller / Model / Service は **testable** に設計（依存はコンストラクタ・引数経由）
+- 宣言的で **Readable** なコーディングを徹底
