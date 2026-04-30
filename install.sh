@@ -114,7 +114,7 @@ while IFS= read -r line; do
   REPO_TEMPLATES+=("$template_type")
 done < "$REPOS_FILE"
 
-EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/")
+EXCLUDE_PATTERNS=("CLAUDE.md" "AGENTS.md" ".claude/" ".github/PULL_REQUEST_TEMPLATE.md" ".github/ISSUE_TEMPLATE/")
 
 echo "--- .git/info/exclude 設定 ---"
 for i in "${!REPO_PATHS[@]}"; do
@@ -142,6 +142,13 @@ for i in "${!REPO_PATHS[@]}"; do
   else
     echo "変更なし: $repo"
   fi
+
+  # 追跡済みの .github/ ファイルは skip-worktree で変更を非表示にする
+  for github_file in ".github/PULL_REQUEST_TEMPLATE.md"; do
+    if git -C "$repo" ls-files --error-unmatch "$github_file" > /dev/null 2>&1; then
+      git -C "$repo" update-index --skip-worktree "$github_file" 2>/dev/null
+    fi
+  done
 done
 
 echo ""
