@@ -1,0 +1,22 @@
+---
+description: Views 規約（app/views/ 配下に適用）
+paths:
+  - "app/views/**"
+---
+
+# Views 規約
+
+## Jbuilder 必須
+- View は **Jbuilder 必須**。ERB は使わない。
+- partial は `_<name>.json.jbuilder` 命名。
+- 名前空間ディレクトリで整理する。
+
+## locals 渡し
+- Controller からは **locals で渡す**。インスタンス変数の過度な多用禁止。
+- View に渡す値は明示的に。
+- testable な設計を保つ。
+
+## ロジック分離
+- 条件分岐ロジックは Decorator / Service / Helper に逃がす。
+- View 内で重い処理（クエリ・計算）を行わない。
+- 宣言的で **Readable** なテンプレートにする。

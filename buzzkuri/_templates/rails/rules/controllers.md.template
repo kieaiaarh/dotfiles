@@ -1,0 +1,27 @@
+---
+description: Controllers 規約（app/controllers/ 配下に適用）
+paths:
+  - "app/controllers/**"
+---
+
+# Controllers 規約
+
+## 役割と責務
+- Controller は **交通整理のみ**。業務ロジックは Model / Service に移譲する。
+- インスタンス変数の過度な多用禁止 → View へは **locals 渡し**。
+- testable な設計を保つ（依存はコンストラクタ・引数経由で受け取る）。
+
+## 継承
+- 必ず**対象の継承元コントローラ**を継承すること（API なら API 用基底、管理画面なら管理画面用基底）。
+- 名前空間ごとに継承元を分ける（API / 管理 / 業務）。
+
+## 認可
+- 認可は **Pundit** に集約。Controller 内に認可ロジックを書かない（→ Policy へ移譲）。
+
+## ルーティング
+- **フラット**（ネスト禁止）。
+- config/routes.rb は **最小差分** で追加（巨大ファイルなので注意）。
+
+## Spec
+- Request Spec は **Controller 単位のファイル**（action 別に分割しない）。
+- 詳細は `rspec.md` 参照。

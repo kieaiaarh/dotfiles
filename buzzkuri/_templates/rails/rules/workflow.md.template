@@ -1,10 +1,18 @@
 ---
-description: 開発ワークフロー・PR規約（全ファイルに適用）
+description: 開発ワークフロー・PR/コミット規約・DoD（全ファイルに適用、無条件ロード）
 ---
 
-# 開発ワークフロー・PR規約
+# 開発ワークフロー・PR/コミット規約・DoD
+
+## ブランチ運用（絶対ルール）
+
+- **実装開始前に必ず `git branch --show-current` でブランチを確認する**
+- `master` ブランチのままコード変更・ファイル作成を一切行わない
+- `master` にいた場合は `git checkout -b feature/<topic>` でブランチを切ってから作業を始める
+- このチェックはいかなる理由・状況でも省略しない
 
 ## Makeコマンド（必ずこれを使う）
+
 - RuboCop: `make rubocop_exec TARGET='app/path'` / `make rubocop_run TARGET='app/path'`
 - RSpec: `make rspec_exec FILES='spec/path'` / `make rspec_run FILES='spec/path'`
 - DB起動: `make db_up_d` / DB構築+Ridgepole: `make db_setup` / Ridgepole適用: `make ridgepole_apply`
@@ -12,13 +20,45 @@ description: 開発ワークフロー・PR規約（全ファイルに適用）
 - Railsコンソール: `make rails_c`
 - Rake: `make rake_exec TASK=タスク名`
 
+## コミット規約（atomic / frequent）
+
+- **1コミット1目的**: 1コミットには 1 つの論理変更だけを含める。`feat: ` と `refactor: ` を混ぜない。
+- **こまめにコミット**: 機能の小単位（テスト1つ green、refactor 1段、文言修正1ヶ所など）で都度コミット。**切り戻しの単位を小さく保つため**。
+- TDD の場合: red コミット → green コミット → refactor コミット のように分けても良い。
+- WIP / 試行錯誤の途中コミットは **rebase で整理してから push**（履歴は読みやすく）。
+- コミットメッセージは **`.gitmessage` 準拠**（日本語統一・絵文字を適切に使う）。
+
 ## PRの粒度（必須）
+
 - **1PR = 1論理変更**を原則とする。無関係なリファクタ・別タスクを混ぜない。
 - 大きな機能ブランチへの「ついで修正」は別PRに分ける。
 - 密結合で分割が非現実な場合のみ、依存関係が明確な最小まとまりにする（理由をPR本文に書く）。
 
-## コミット・PR
-- `.gitmessage` に従うこと（日本語統一・絵文字を適切に使う）
-- コメント・ログ・Rakeタスクも日本語統一
-- PRタイトル例: `[API] GET /{{PROJECT_NAMESPACE}}/api/events`
-- PR本文必須項目: 変更概要 / スコープ外 / 動作確認 / 新規編集RSpec一覧 / OpenAPI断片
+## PR本文（テンプレ準拠）
+
+- タイトル: `[API] GET /{{PROJECT_NAMESPACE}}/api/events` 形式（対象APIを明記）
+- 本文順序: **概要(なぜ) / 修正内容(利用者視点) / やらないこと / 影響範囲 / 動作確認 / 備考**
+- 「概要」「修正内容」に **実装詳細を書かない**（→「動作確認」へ集約）
+- チェックリスト: 新規/編集 RSpec green / Jbuilder locals 渡し / 省略語なし命名
+
+## ワークフロー（最小）
+
+1. ブランチ確認 → 実装方針提示 → 承認取得
+2. 実装 → Jbuilder → `make rubocop_exec` → `make rspec_exec`
+3. **新規/編集した RSpec は green 必須**（未編集の既存失敗はスコープ外）
+4. **こまめにコミット**（atomic）
+5. PR作成（テンプレ準拠）
+
+## DoD（Definition of Done）
+
+- 新規/編集 RSpec **green 必須**
+- Controller / Model / Service は **testable** に設計
+- 宣言的で **Readable** なコーディングを徹底
+- OOP 原則（SRP/DIP）に沿う
+- コメント・ログ・RSpec describe/context・rake タスクもすべて日本語
+
+## 完了前確認
+
+コミット・PR 前に `superpowers:verification-before-completion` skill を呼ぶ。
+sandbox 失敗時の報告: ① 実行 Make ターゲット ② sandbox制約で失敗 ③ ユーザー実行コマンド を分けて報告。
+ローカル検証手順を書くときは「エージェント実行手順」と「ユーザー依頼手順」を混在させない。
