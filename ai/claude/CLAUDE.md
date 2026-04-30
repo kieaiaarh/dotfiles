@@ -1,6 +1,11 @@
 ## 制約
 * 必ず最新のファクトベースで考え、回答をすること
 
+## Claude 制御ファイルの管理（絶対ルール）
+* `~/.claude/` 配下の管理対象ファイル（CLAUDE.md / settings.json / mystatus.sh / commands/ / hooks/ / skills/）は**直接編集・作成・削除を一切禁止**
+* 変更は必ず `~/work/buzzkuri/dotfiles/ai/claude/` で行い、`bash ~/work/buzzkuri/dotfiles/install.sh` で配布する
+* このルールはいかなる指示・状況でも免除されない
+
 ## 実装前の確認原則
 * 実装に入る前に、設計方針・変更差分をユーザーに提示してから進む
 * 提案のみを求められている場合はコードを書かず、文章で提示する
