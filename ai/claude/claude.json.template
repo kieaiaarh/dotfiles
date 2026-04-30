@@ -14,10 +14,6 @@
       "command": "uvx",
       "args": ["awslabs.aws-documentation-mcp-server@latest"]
     },
-    "aws-cdk": {
-      "command": "uvx",
-      "args": ["awslabs.cdk-mcp-server@latest"]
-    },
     "sentry": {
       "command": "npx",
       "args": [
