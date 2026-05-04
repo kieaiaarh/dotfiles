@@ -25,17 +25,17 @@ app/
     _components/ ← 画面専用 organism + molecule
   _lib/
     components/ ← 汎用 organism（複数画面で使用）
-    hooks/
-      api/      ← ComplianceApiClient ベースの useQuery/useMutation ラップ custom hooks
+    apis/       ← API 定義（apiOf で生成した ApiDefinition オブジェクト + 型）
+    hooks/      ← 汎用 custom hooks（業務ロジック非 API 系）
 ```
 
 ## API リクエスト方針
 
 Static SPA のため RSC は使用しない。
 
-- **全リクエスト**: `app/_lib/hooks/api/` 内に TanStack Query の `useQuery` / `useMutation` をラップした custom hook を作成して使用する
-- `ComplianceApiClient.ts` を直接呼ぶのは hooks 内のみ
-- コンポーネント・ページから直接 API 呼び出しは禁止
+- **API 定義**: `app/_lib/apis/*.ts` に `apiOf(method, path)` で `ApiDefinition` を定義し、型を export する
+- **呼び出し**: `useSuspenseQueryApi` / `useQueryApi` / `useMutationApi`（`@/lib/apis` から import）をコンポーネント内で直接呼ぶ。独自 wrapper hook は不要
+- `ComplianceApiClient.ts` を直接呼ぶのは `lib/apis/` 内のみ
 
 ## Context / Provider
 
@@ -56,7 +56,8 @@ SomeComponent.test.tsx
 # 分割パターン（推奨・複雑な場合）
 SomeComponent/
   index.tsx
-  index.module.scss
+  style.module.scss    ← index.module.scss ではなく style.module.scss
+  types.ts             ← 必須（Props・フォーム型定義）
   index.test.tsx
 ```
 
