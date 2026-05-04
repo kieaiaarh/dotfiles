@@ -11,17 +11,17 @@
 ~/work/buzzkuri/columns wordpress
 ~/work/buzzkuri/infra infra-cdk
 ~/work/buzzkuri/ai-infra infra-cdk
-~/work/buzzkuri/compliance_admin nextjs
+~/work/buzzkuri/compliance_admin cp-nextjs
 ~/work/buzzkuri/internal_lambdas serverless
-~/work/buzzkuri/account nextjs
+~/work/buzzkuri/account cp-nextjs
 ~/work/buzzkuri/buzzkuri-frontend nextjs  # Next.js 10 / TS 4 / Jest。配布後に手動調整が必要（将来 nextjs-legacy テンプレート化）
-~/work/buzzkuri/compliance nextjs
+~/work/buzzkuri/compliance cp-nextjs
 ~/work/buzzkuri/compliance_top static
 ~/work/buzzkuri/partner nextjs
 ~/work/buzzkuri/portal nextjs  # Makefile なし・Docker なし。配布後に CLAUDE.md / workflow.md を手動調整
 ~/work/buzzkuri/admins nextjs
 ~/work/buzzkuri/engagement_solution nextjs
-~/work/buzzkuri/engagement_survey nextjs
+~/work/buzzkuri/engagement_survey cp-nextjs
 
 # compliance-police
 ~/work/compliance-police/backend cp-rails
