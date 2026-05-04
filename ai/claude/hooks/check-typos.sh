@@ -3,7 +3,8 @@
 # exit 0: 常に許可（警告のみ、ブロックしない）
 set -eu
 
-file_path=$(printf '%s\n' "$CLAUDE_TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null || true)
+input=$(cat)
+file_path=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null || true)
 
 if [ -z "$file_path" ]; then
   exit 0

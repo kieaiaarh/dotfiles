@@ -3,7 +3,8 @@
 # CLAUDE.md「省略語禁止」ルールを機械的に検査
 set -eu
 
-file_path=$(printf '%s\n' "$CLAUDE_TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null || true)
+input=$(cat)
+file_path=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null || true)
 
 if [ -z "$file_path" ]; then
   exit 0

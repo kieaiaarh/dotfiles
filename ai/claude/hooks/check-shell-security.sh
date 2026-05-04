@@ -4,8 +4,9 @@
 # exit 2: ブロック（エラーメッセージを表示して書き込みを止める）
 set -eu
 
-file_path=$(printf '%s\n' "$CLAUDE_TOOL_INPUT" | jq -r '.file_path // empty' 2>/dev/null || true)
-content=$(printf '%s\n' "$CLAUDE_TOOL_INPUT" | jq -r '.content // .new_string // empty' 2>/dev/null || true)
+input=$(cat)
+file_path=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null || true)
+content=$(printf '%s' "$input" | jq -r '.tool_input.content // .tool_input.new_string // empty' 2>/dev/null || true)
 
 # .sh ファイル以外はスキップ
 case "$file_path" in
