@@ -10,10 +10,10 @@
 
 - Node.js `{{NODE_VERSION}}` / Next.js `{{NEXTJS_VERSION}}`
 - 言語: TypeScript（strict mode）
-- スタイリング: {{STYLING_TOOL}}
-- データ取得: {{STATE_TOOL}}
+- スタイリング: CSS Modules + SASS（`*.module.scss`）
+- データ取得: TanStack Query
 - HTTP クライアント: {{API_CLIENT}}
-- テスト: {{TEST_TOOL}}
+- テスト: Vitest
 - Lint: ESLint + Prettier + Husky（lint-staged）
 
 ## 最重要実行ルール
@@ -46,11 +46,18 @@
 
 ## コーディング規約
 
-- TypeScript strict mode 必須。`any` 禁止
+- TypeScript strict mode 必須。`any` 禁止（→ `unknown` + 型ガードで解決）
 - コンポーネントは関数コンポーネントのみ。Props は interface で定義
+- **実装優先順位**: 純粋関数 → hooks → components（ロジックは描画から分離）
+- コンポーネントには描画のみ記述。業務ロジックは hooks / functions に寄せる
 - パスエイリアス: `@/*` で import
-- 省略語禁止
+- 省略語禁止（変数名・ファイル名・ディレクトリ名すべて）
 - コメント・ログ・テストの describe/it はすべて日本語
+
+## アーキテクチャ方針
+
+Notion「Frontendアーキテクチャ設計」に従うこと。
+詳細は `.claude/rules/architecture.md` 参照。
 
 ## ワークフロー
 

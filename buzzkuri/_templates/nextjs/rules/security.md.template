@@ -1,0 +1,43 @@
+---
+paths:
+  - "app/**/*.ts"
+  - "app/**/*.tsx"
+  - "lib/**/*.ts"
+  - "lib/**/*.tsx"
+---
+
+# セキュリティ規約
+
+## XSS 対策
+
+- `dangerouslySetInnerHTML` は原則禁止。使う場合は DOMPurify 等でサニタイズしてから渡す
+- ユーザー入力を直接 HTML に反映しない
+
+## リンク
+
+- `target="_blank"` を使う場合は必ず `rel="noopener noreferrer"` を付ける
+
+```tsx
+// NG
+<a href={url} target="_blank">リンク</a>
+
+// OK
+<a href={url} target="_blank" rel="noopener noreferrer">リンク</a>
+```
+
+## 環境変数
+
+- `NEXT_PUBLIC_` prefix を持つ変数はブラウザに露出する。API キー・シークレット等の機密情報は絶対に付けない
+- `.env*` ファイルはリポジトリにコミットしない（`.gitignore` で除外済みであること）
+
+## Cookie
+
+認証トークンは Cookie で管理し、サーバー（API または Next.js）が Set-Cookie する場合は以下の属性を設定する:
+- `HttpOnly`: JavaScript からアクセス不可にする
+- `Secure`: HTTPS 通信のみで送信
+- `SameSite=Lax`: CSRF 対策（メールリンク等の外部遷移も許容）。厳格な要件がある場合のみ `Strict`
+
+## CSP（Content Security Policy）
+
+`next.config.ts` の `headers()` で CSP ヘッダーを設定することを推奨する。
+少なくとも `script-src` に `'unsafe-inline'` は使わず、nonce ベースまたはハッシュベースで管理する。
