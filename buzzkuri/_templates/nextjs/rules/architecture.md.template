@@ -37,8 +37,8 @@ app/
 ## Context / Provider
 
 - Provider と Context をカプセル化し、custom hook を export するファイルとして作成する
-- 共通機能: `context/feature.tsx`
-- 画面専用: `app/{画面パス}/_components/context.tsx` または `context/index.tsx`
+- 共通機能（複数画面で使用）: `app/_lib/context/feature.tsx`
+- 画面専用: `app/{画面パス}/_components/context.tsx` または `app/{画面パス}/_components/context/index.tsx`
 
 ## ファイル分割パターン
 
