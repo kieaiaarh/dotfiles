@@ -1,0 +1,68 @@
+---
+paths:
+  - "app/**/*"
+  - "lib/**/*"
+---
+
+# アーキテクチャ規約
+
+## ディレクトリ責務
+
+```
+lib/
+  components/   ← atom（全画面共通）、汎用 molecule
+  hooks/        ← 汎用 custom hooks
+  functions/    ← 汎用ユーティリティ（純粋関数）
+  apis/         ← API クライアント・型定義
+  types/        ← 共有型定義
+  styles/       ← グローバル・モジュールスタイル
+app/
+  {画面パス}/
+    page.tsx    ← 薄くする。表示は _components に委譲
+    _components/ ← 画面専用 organism + molecule
+  _lib/
+    components/ ← 汎用 organism（複数画面で使用）
+    hooks/
+      api/      ← useQueryApi ラップの custom hooks
+    functions/
+      serverComponentRequestApi.ts ← RSC 用リクエスト関数
+```
+
+## API リクエスト方針
+
+- **クライアントコンポーネント（CC）**: `app/_lib/hooks/api/` 内に TanStack Query の `useQuery` / `useMutation` をラップした custom hook を作成して使用する
+- **RSC（React Server Component）**: `app/_lib/functions/serverComponentRequestApi` を使用する
+- axios / fetch の直書きは禁止。必ず上記経由
+
+## Context / Provider
+
+- Provider と Context をカプセル化し、custom hook を export するファイルとして作成する
+- 共通機能: `context/feature.tsx`
+- 画面専用: `app/{画面パス}/_components/context.tsx` または `context/index.tsx`
+
+## ファイル分割パターン
+
+コンポーネントが複雑になった場合は分割パターンを採用する:
+
+```
+# 1ファイルパターン（シンプルな場合）
+SomeComponent.tsx
+SomeComponent.test.tsx
+
+# 分割パターン（推奨・複雑な場合）
+SomeComponent/
+  index.tsx
+  style.module.scss
+  index.test.tsx
+```
+
+## ページは薄く
+
+- `page.tsx` には最小限の記述のみ
+- 表示ロジックは `_components/` 配下の organism に委譲する
+- データ取得は custom hook に閉じ込める
+
+## 画像
+
+- 静的画像: `public/` 配下に配置 → `<img>` タグ（next/image は SSR 有効時のみ）
+- 動的画像（CDN）: CloudFront パスを直接 `<img src="...">` で指定（next/image を使わない）
