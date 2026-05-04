@@ -55,7 +55,8 @@ fi
 
 if [ -n "$warn" ]; then
   printf '\n%s' "$warn" >&2
-  printf 'CLAUDE.md「Class ≤ 100行 / Method ≲ 30行」ルール違反。責務分割を検討してください。\n\n' >&2
+  printf 'CLAUDE.md「Class ≤ 100行 / Method ≲ 30行」ルール超過。責務分割の方針をユーザーに確認してから作業を進めてください。\n\n' >&2
+  exit 2
 fi
 
 exit 0
