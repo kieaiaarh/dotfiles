@@ -23,11 +23,7 @@ if [ -n "$status" ]; then
 $(printf '%s' "$status")"
 fi
 
-printf '%s' "$context" | jq -Rs '{
-  hookSpecificOutput: {
-    hookEventName: "PreCompact",
-    additionalContext: .
-  }
-}'
+printf '%s\n' "$context" >&2
 
+printf '{}'
 exit 0
