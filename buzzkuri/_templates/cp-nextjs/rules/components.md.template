@@ -39,8 +39,59 @@ app
 - 業務ロジックは hooks（`app/_lib/hooks/`）に分離
 - Context/Provider は Provider + Context をカプセル化した hook を export する形で作成する
 
+### ロジック分離パターン（2 つのバリアント）
+
+**原則は共通**: export コンポーネントは JSX のみ。state・handler を直接持たない。
+
+**バリアント A — inline `useStates`**（シンプルな場合。index.tsx 内に定義）:
+
+```tsx
+export const SomeDialog: FC<Props> = (props) => {
+  const { value, isPending, handleSubmit, handleClose } = useStates(props)
+  return <div>{/* JSX のみ */}</div>
+}
+
+function useStates(props: Props) {
+  const { onClose } = props
+  const [isPending, setIsPending] = useState(false)
+  const handleClose = useCallback(() => { ... }, [onClose])
+  return { value, isPending, handleSubmit, handleClose }
+}
+```
+
+- `useStates` は export コンポーネント専用。同一ファイルのサブコンポーネントは通常の hook 呼び出しで可
+- 1ファイルに複数の `useStates` を定義すると名前衝突するため使用は1つまで
+
+**バリアント B — `hook.ts`**（ロジックが大きくなった場合。別ファイルに分離）:
+
+```tsx
+// hook.ts
+export const useSomeDialogStates = (props: Props) => {
+  const { onClose } = props
+  const [isPending, setIsPending] = useState(false)
+  return { value, isPending, handleSubmit, handleClose }
+}
+
+// index.tsx
+export const SomeDialog: FC<Props> = (props) => {
+  const { value, isPending, handleSubmit, handleClose } = useSomeDialogStates(props)
+  return <div>{/* JSX のみ */}</div>
+}
+```
+
+- hook 名は `useXxxStates`（コンポーネント名を含める）
+- `hook.ts` を作る場合、`types.ts` も別ファイルに分離されることが多い
+
 ## データ取得
 
 - Static SPA（SSR なし）のため、クライアントサイドで TanStack Query を使用
-- API クライアントは `lib/apis/` に集約（`ComplianceApiClient.ts` がベース）
-- `app/_lib/hooks/api/` 配下に `useQuery` / `useMutation` をラップした custom hook を作成して使用する
+- API 定義は `app/_lib/apis/*.ts` に集約（`apiOf` で `ApiDefinition` を生成）
+- `useSuspenseQueryApi`: ページ表示に必須なデータ取得（`<Suspense>` で囲む）
+- `useQueryApi`: ユーザー操作起因・段階的表示（debounce 検索など、Suspense 不要な場合）
+- `useMutationApi`: POST / PATCH / DELETE
+
+## フィードバックパターン
+
+- **成功**: `const { showSuccess } = useToast()` → `showSuccess(result.message)` でトースト通知
+- **エラー**: `const [errorMessage, setErrorMessage] = useState<string | null>(null)` + JSX に `<div role="alert">{errorMessage}</div>` でインライン表示
+- `alert()` / `confirm()` 使用禁止
