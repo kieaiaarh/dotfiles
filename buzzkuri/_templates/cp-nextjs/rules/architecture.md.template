@@ -40,8 +40,8 @@ Static SPA のため RSC は使用しない。
 ## Context / Provider
 
 - Provider と Context をカプセル化し、custom hook を export するファイルとして作成する
-- 共通機能: `context/feature.tsx`
-- 画面専用: `app/{画面パス}/_components/context.tsx` または `context/index.tsx`
+- 共通機能（複数画面で使用）: `app/_lib/context/feature.tsx`
+- 画面専用: `app/{画面パス}/_components/context.tsx` または `app/{画面パス}/_components/context/index.tsx`
 
 ## ファイル分割パターン
 
@@ -62,5 +62,6 @@ SomeComponent/
 
 ## React Compiler
 
-React Compiler が有効のため、`useMemo` / `useCallback` の手動最適化は原則不要。
-パフォーマンス問題が明確な場合のみ使用し、理由をコメントで残す。
+React Compiler が有効のため、パフォーマンス目的の `useMemo` / `useCallback` は原則不要。
+`useEffect` の依存配列安定化など最適化以外の目的で必要な場合はその限りではない。
+使用する場合は理由をコメントで残す。

@@ -33,12 +33,13 @@ paths:
 
 ## Cookie
 
-Cookie を扱う場合は以下の属性を設定する:
+認証トークンは `localStorage` / `sessionStorage` に保存せず、Cookie で管理する。
+Cookie は API サーバーが `Set-Cookie` レスポンスヘッダで発行し（フロントから `document.cookie` で直接セットしない）、以下の属性を付与する:
 - `HttpOnly`: JavaScript からアクセス不可にする
 - `Secure`: HTTPS 通信のみで送信
-- `SameSite=Strict`（または `Lax`）: CSRF 対策
+- `SameSite=Lax`: CSRF 対策（メールリンク等の外部遷移も許容）。厳格な要件がある場合のみ `Strict`
 
 ## Static SPA 固有
 
 - `output: 'export'` のため Next.js のサーバー機能（Server Actions 等）は使用不可
-- 認証トークンの保存先: `httpOnly` Cookie を推奨（`localStorage` / `sessionStorage` への機密情報保存は避ける）
+- 認証・セッション管理はすべてバックエンド API 側で行う
