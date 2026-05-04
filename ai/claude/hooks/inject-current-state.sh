@@ -23,7 +23,7 @@ branch=$(git -C "$project_root" branch --show-current 2>/dev/null || echo "")
 
 # 重要ルール抽出（CLAUDE.md の絶対ルール／Make早見表セクションを切り出し）
 critical_rules=$(awk '
-  /^## (絶対ルール|Make早見表|完了前確認)/ { capture=1; print; next }
+  /^## .*(ルール|制約|禁止|Guard|完了前|操作|確認|絶対|重要|管理)/ { capture=1; print; next }
   /^## / && capture { capture=0 }
   capture { print }
 ' "$project_root/CLAUDE.md" 2>/dev/null || true)

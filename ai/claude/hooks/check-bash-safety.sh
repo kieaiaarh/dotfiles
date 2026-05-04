@@ -4,7 +4,8 @@
 # exit 2: ブロック
 set -eu
 
-cmd=$(printf '%s\n' "$CLAUDE_TOOL_INPUT" | jq -r '.command // empty' 2>/dev/null || true)
+input=$(cat)
+cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null || true)
 
 if [ -z "$cmd" ]; then
   exit 0

@@ -1,4 +1,8 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "permissions": {
     "deny": [
       "Read(.env*)",
@@ -11,12 +15,17 @@
     ],
     "defaultMode": "acceptEdits"
   },
-  "model": "sonnet",
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-start-branch-check.sh"
+          }
+        ]
+      }
+    ],
     "UserPromptSubmit": [
       {
         "hooks": [
@@ -46,6 +55,26 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/check-frozen-string-literal.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/stop-completion-reminder.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/pre-compact-save-state.sh"
           }
         ]
       }
@@ -150,5 +179,6 @@
     "enableWeakerNetworkIsolation": true
   },
   "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "model": "sonnet"
 }
