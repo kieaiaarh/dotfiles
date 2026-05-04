@@ -28,7 +28,8 @@ if [ "$lang" = "ruby" ]; then
     | grep -vE 'rescue.*=>[[:space:]]*e[[:space:]]*$|rescue.*=>[[:space:]]*e[[:space:]]*\|' || true)
 else
   # TypeScript: アロー関数引数 (e) / ローカル変数 const ev =
-  patterns='\([ ]*(e|b|ev|req|res|err|cfg|tmp|btn|ctx)[ ]*[,)]|(const|let|var)[ ]+(e|b|ev|req|res|err|cfg|tmp)[ ]*='
+  # res/err は TS コミュニティで慣例的に使われるため除外（const res = await fetch() 等）
+  patterns='\([ ]*(e|b|ev|req|cfg|tmp|btn|ctx)[ ]*[,)]|(const|let|var)[ ]+(e|b|ev|req|cfg|tmp|btn|ctx)[ ]*='
   hits=$(grep -nE "$patterns" "$file_path" 2>/dev/null || true)
 fi
 
