@@ -12,6 +12,10 @@
     "defaultMode": "acceptEdits"
   },
   "model": "sonnet",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "hooks": {
     "UserPromptSubmit": [
       {
