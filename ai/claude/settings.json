@@ -181,5 +181,6 @@
     "enableWeakerNetworkIsolation": true
   },
   "theme": "dark",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "model": "sonnet"
 }

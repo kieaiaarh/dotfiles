@@ -10,9 +10,9 @@ if [ -z "$file_path" ]; then
   exit 0
 fi
 
-# Ruby/spec のみ対象
 case "$file_path" in
-  *.rb) ;;
+  *.rb) lang="ruby" ;;
+  *.ts|*.tsx) lang="ts" ;;
   *) exit 0 ;;
 esac
 
@@ -20,18 +20,23 @@ if [ ! -f "$file_path" ]; then
   exit 0
 fi
 
-# 典型的な省略パターン検知
-# - 単独の |e| |b| |ev| |biz| |req| |usr| |cfg| ブロック引数
-# - = ev | = biz | = req | = usr のローカル変数代入
-patterns='\|[ ]*(e|b|ev|biz|req|usr|cfg|cnt|tmp)[ ]*\||[[:space:]](ev|biz|req|usr|cfg)[ ]*='
-
-# rescue => e は RuboCop で必須なので除外
-hits=$(grep -nE "$patterns" "$file_path" 2>/dev/null | grep -vE 'rescue.*=>[[:space:]]*e[[:space:]]*$|rescue.*=>[[:space:]]*e[[:space:]]*\|' || true)
+if [ "$lang" = "ruby" ]; then
+  # Ruby: ブロック引数 |e| / ローカル変数 ev =
+  patterns='\|[ ]*(e|b|ev|biz|req|usr|cfg|cnt|tmp)[ ]*\||[[:space:]](ev|biz|req|usr|cfg)[ ]*='
+  # rescue => e は RuboCop で必須なので除外
+  hits=$(grep -nE "$patterns" "$file_path" 2>/dev/null \
+    | grep -vE 'rescue.*=>[[:space:]]*e[[:space:]]*$|rescue.*=>[[:space:]]*e[[:space:]]*\|' || true)
+else
+  # TypeScript: アロー関数引数 (e) / ローカル変数 const ev =
+  # res/err は TS コミュニティで慣例的に使われるため除外（const res = await fetch() 等）
+  patterns='\([ ]*(e|b|ev|req|cfg|tmp|btn|ctx)[ ]*[,)]|(const|let|var)[ ]+(e|b|ev|req|cfg|tmp|btn|ctx)[ ]*='
+  hits=$(grep -nE "$patterns" "$file_path" 2>/dev/null || true)
+fi
 
 if [ -n "$hits" ]; then
   printf '\n⚠️  省略変数名の疑い: %s\n' "$file_path" >&2
   printf '%s\n' "$hits" >&2
-  printf 'CLAUDE.md「省略語禁止」違反の可能性。フルネームに変更してください（例: |e| → |event|）\n\n' >&2
+  printf 'CLAUDE.md「省略語禁止」違反の可能性。フルネームに変更してください（例: (e) → (event)、const ev → const eventData）\n\n' >&2
 fi
 
 exit 0
