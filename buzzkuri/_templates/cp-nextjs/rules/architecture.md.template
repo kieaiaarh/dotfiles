@@ -1,0 +1,66 @@
+---
+paths:
+  - "app/**/*"
+  - "lib/**/*"
+---
+
+# アーキテクチャ規約（cp-nextjs）
+
+Static SPA（`output: 'export'`、SSR なし）を前提とする。
+
+## ディレクトリ責務
+
+```
+lib/
+  components/   ← atom（全画面共通）、汎用 molecule
+  hooks/        ← 汎用 custom hooks
+  functions/    ← 汎用ユーティリティ（純粋関数）
+  apis/         ← API クライアント（ComplianceApiClient.ts がベース）・型定義
+  types/        ← 共有型定義
+  styles/       ← グローバル・SCSS Modules スタイル
+  csv/          ← CSV ユーティリティ
+app/
+  {画面パス}/
+    page.tsx    ← 薄くする。表示は _components に委譲
+    _components/ ← 画面専用 organism + molecule
+  _lib/
+    components/ ← 汎用 organism（複数画面で使用）
+    hooks/
+      api/      ← ComplianceApiClient ベースの useQuery/useMutation ラップ custom hooks
+```
+
+## API リクエスト方針
+
+Static SPA のため RSC は使用しない。
+
+- **全リクエスト**: `app/_lib/hooks/api/` 内に TanStack Query の `useQuery` / `useMutation` をラップした custom hook を作成して使用する
+- `ComplianceApiClient.ts` を直接呼ぶのは hooks 内のみ
+- コンポーネント・ページから直接 API 呼び出しは禁止
+
+## Context / Provider
+
+- Provider と Context をカプセル化し、custom hook を export するファイルとして作成する
+- 共通機能: `context/feature.tsx`
+- 画面専用: `app/{画面パス}/_components/context.tsx` または `context/index.tsx`
+
+## ファイル分割パターン
+
+コンポーネントが複雑になった場合は分割パターンを採用する:
+
+```
+# 1ファイルパターン（シンプルな場合）
+SomeComponent.tsx
+SomeComponent.module.scss
+SomeComponent.test.tsx
+
+# 分割パターン（推奨・複雑な場合）
+SomeComponent/
+  index.tsx
+  index.module.scss
+  index.test.tsx
+```
+
+## React Compiler
+
+React Compiler が有効のため、`useMemo` / `useCallback` の手動最適化は原則不要。
+パフォーマンス問題が明確な場合のみ使用し、理由をコメントで残す。

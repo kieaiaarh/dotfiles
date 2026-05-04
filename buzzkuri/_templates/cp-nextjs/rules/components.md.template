@@ -10,13 +10,37 @@ paths:
 ## 基本
 - 関数コンポーネントのみ（クラスコンポーネント禁止）
 - Props は interface で定義
-- Radix UI を UI プリミティブとして使用。スタイリングは SCSS Modules + clsx で合成
+- UI プリミティブ: **Radix UI**。スタイリング: **SCSS Modules + clsx** で合成
 
-## 構造
-- ページ固有コンポーネント → `app/_components/`
-- 再利用可能コンポーネント → `lib/components/`
-- ロジックはカスタムフック（`lib/hooks/`）に分離
+## コンポーネント分類
+
+- **organism**: 業務ロジックに依存するコンポーネント
+- **molecule**: 業務ロジック非依存・構造あり（複数タグの組み合わせ）
+- **atom**: 業務ロジック非依存・単一タグで完結
+
+## 配置ルール
+
+```
+lib
+└─ components/        ← atom は必ずここ。汎用 molecule もここ
+app
+├─ {画面パス}/
+│  └─ _components/   ← 画面専用 organism（+ その molecule）
+└─ _lib/
+   └─ components/    ← 汎用 organism（複数画面で使用）
+```
+
+- organism が organism を参照する場合、子は**ネストせず同一ディレクトリ直下**に置く
+- 汎用化できると断言できるまでは画面専用として扱う
+
+## ロジック分離
+
+- コンポーネントには**描画のみ**記述する
+- 業務ロジックは hooks（`app/_lib/hooks/`）に分離
+- Context/Provider は Provider + Context をカプセル化した hook を export する形で作成する
 
 ## データ取得
+
 - Static SPA（SSR なし）のため、クライアントサイドで TanStack Query を使用
 - API クライアントは `lib/apis/` に集約（`ComplianceApiClient.ts` がベース）
+- `app/_lib/hooks/api/` 配下に `useQuery` / `useMutation` をラップした custom hook を作成して使用する
