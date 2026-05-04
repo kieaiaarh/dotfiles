@@ -12,13 +12,7 @@ if [ -z "$uncommitted" ]; then
 fi
 
 count=$(printf '%s\n' "$uncommitted" | wc -l | tr -d ' ')
-msg="⚠️ 未コミットの変更が ${count} 件あります。作業完了前に \`git commit\` または \`git stash\` を確認してください。（CLAUDE.md「完了前の確認」）"
+printf '⚠️ 未コミットの変更が %s 件あります。作業完了前に `git commit` または `git stash` を確認してください。（CLAUDE.md「完了前の確認」）\n' "$count" >&2
 
-printf '%s' "$msg" | jq -Rs '{
-  hookSpecificOutput: {
-    hookEventName: "Stop",
-    additionalContext: .
-  }
-}'
-
+printf '{}'
 exit 0
